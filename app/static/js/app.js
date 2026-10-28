@@ -1,9 +1,11 @@
 /**
- * BTP Public Tender Analyzer - Client Application Logic
+ * BTP Public Tender Analyzer - SaaS B2B Application Logic
  */
 
 // Application State
 const AppState = {
+    currentView: 'landing', // 'landing' | 'dashboard'
+    currentSidebarTab: 'nouvelle-analyse',
     cctpFile: null,
     dpgfFile: null,
     currentAnalysis: null,
@@ -15,29 +17,137 @@ const AppState = {
         tvaPct: 20.0
     },
     dpgfFilter: '',
+    history: [
+        {
+            id: 'BTP-20261028-01',
+            date: '28/10/2026 à 14:30',
+            title: 'Rénovation énergétique et mise aux normes électriques - École Pasteur',
+            client: 'Mairie de Saint-Germain-en-Laye',
+            score: 66,
+            verdict: 'GO_AVEC_RESERVES',
+            sampleId: '1'
+        },
+        {
+            id: 'BTP-20261028-02',
+            date: '28/10/2026 à 11:15',
+            title: 'Réhabilitation acoustique et faux-plafonds - Nouvelle Médiathèque',
+            client: 'Grand Paris Ouest',
+            score: 66,
+            verdict: 'GO_AVEC_RESERVES',
+            sampleId: '2'
+        }
+    ],
     checklist: [
-        { id: 'dc1', label: 'Lettre de candidature DC1 (ou DUME)', required: true, checked: false },
-        { id: 'dc2', label: 'Déclaration du candidat DC2 (chiffre d’affaires 3 ans)', required: true, checked: false },
+        { id: 'dc1', label: 'Lettre de candidature DC1 (ou DUME acheteur)', required: true, checked: true },
+        { id: 'dc2', label: 'Déclaration du candidat DC2 (chiffre d’affaires sur 3 ans)', required: true, checked: true },
         { id: 'attri1', label: 'Acte d’engagement ATTRI1 signé', required: true, checked: false },
-        { id: 'decennale', label: 'Attestation d’Assurance Décennale & RC Pro valide', required: true, checked: false },
-        { id: 'memoire', label: 'Mémoire Technique BTP personnalisé (sécurité, planning, moyens)', required: true, checked: false },
+        { id: 'decennale', label: 'Attestation d’Assurance Décennale & RC Pro valide', required: true, checked: true },
+        { id: 'memoire', label: 'Mémoire Technique BTP personnalisé (sécurité, moyens, planning)', required: true, checked: false },
         { id: 'dpgf', label: 'Bordereau DPGF / BPU complété et vérifié', required: true, checked: false },
-        { id: 'rib', label: 'Relevé d’Identité Bancaire (RIB) de l’entreprise', required: true, checked: false },
-        { id: 'kbis', label: 'Extrait Kbis de moins de 3 mois & régularité fiscale/sociale', required: true, checked: false },
+        { id: 'rib', label: 'Relevé d’Identité Bancaire (RIB) de l’entreprise', required: true, checked: true },
+        { id: 'kbis', label: 'Extrait Kbis de moins de 3 mois & régularité fiscale/URSSAF', required: true, checked: true },
     ]
 };
 
 // DOM Initializer
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if initial view was requested via URL or query param
+    const path = window.location.pathname;
+    const hash = window.location.hash;
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (path.includes('/app') || hash === '#app' || urlParams.get('view') === 'app') {
+        switchToDashboard();
+    } else {
+        switchToLanding();
+    }
+
     initDragAndDrop();
     initEventListeners();
     checkEngineStatus();
     loadSavedApiKey();
     renderChecklist();
+    renderHistoryTable();
+
     if (window.lucide) {
         lucide.createIcons();
     }
 });
+
+// View Switching Functions
+function switchToDashboard() {
+    AppState.currentView = 'dashboard';
+    const landing = document.getElementById('landing-page-view');
+    const dash = document.getElementById('dashboard-view');
+    if (landing) landing.classList.add('hidden');
+    if (dash) dash.classList.remove('hidden');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+}
+
+function switchToLanding() {
+    AppState.currentView = 'landing';
+    const landing = document.getElementById('landing-page-view');
+    const dash = document.getElementById('dashboard-view');
+    if (landing) landing.classList.remove('hidden');
+    if (dash) dash.classList.add('hidden');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+}
+
+function switchToDashboardAndLoadSample(sampleId) {
+    switchToDashboard();
+    switchSidebarTab('nouvelle-analyse');
+    loadSample(sampleId);
+}
+
+// Sidebar Navigation
+function switchSidebarTab(tabName) {
+    AppState.currentSidebarTab = tabName;
+    const subviews = ['nouvelle-analyse', 'historique', 'simulateur', 'checklist', 'compte'];
+
+    subviews.forEach(v => {
+        const el = document.getElementById(`subview-${v}`);
+        const btn = document.getElementById(`nav-btn-${v}`);
+        if (el) {
+            if (v === tabName) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+        if (btn) {
+            if (v === tabName) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        }
+    });
+
+    const titleMap = {
+        'nouvelle-analyse': 'Nouvelle Analyse de Marché',
+        'historique': 'Historique de vos Dossiers',
+        'simulateur': 'Simulateur de Marges & Déboursé Sec',
+        'checklist': 'Checklist Candidature Marchés Publics',
+        'compte': 'Mon Compte & Formule Pro (300 € / an)'
+    };
+
+    const titleEl = document.getElementById('workspace-title');
+    if (titleEl && titleMap[tabName]) {
+        titleEl.textContent = titleMap[tabName];
+    }
+
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+}
 
 function initEventListeners() {
     // File inputs
@@ -83,10 +193,10 @@ function initEventListeners() {
     if (btnExportCsv) btnExportCsv.addEventListener('click', exportCsv);
     if (btnPrint) btnPrint.addEventListener('click', () => window.print());
 
-    // Navigation Tabs
+    // Navigation Tabs in Results Section
     const tabButtons = document.querySelectorAll('.nav-tab-btn');
     tabButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', () => {
             const target = btn.dataset.tab;
             switchTab(target);
         });
@@ -148,7 +258,8 @@ function initEventListeners() {
             AppState.geminiApiKey = val;
             localStorage.setItem('btp_gemini_api_key', val);
             modalApiKey.classList.add('hidden');
-            updateEngineStatusBadge(val ? 'Gemini AI Connecté' : 'Moteur Expert Local', !!val);
+            updateEngineStatusBadge(val ? 'Gemini AI Connecté' : 'Moteur Expert BTP Actif', !!val);
+            showToast('Clé enregistrée', 'La configuration de l’API a été mise à jour.', 'success');
         });
     }
 }
@@ -296,6 +407,7 @@ async function launchAnalysis() {
         AppState.currentAnalysis = analysis;
         finishProgressStepper();
         renderAnalysisResults(analysis);
+        addToHistory(analysis);
         showToast('Analyse réussie', 'Le dossier d’appel d’offres a été analysé avec succès.', 'success');
     } catch (err) {
         showProgressStepper(false);
@@ -325,6 +437,7 @@ async function loadSample(sampleId) {
         AppState.currentAnalysis = analysis;
         finishProgressStepper();
         renderAnalysisResults(analysis);
+        addToHistory(analysis);
         showToast('Exemple BTP chargé', `Le marché "${analysis.overview.title}" est prêt à être examiné.`, 'success');
     } catch (err) {
         showProgressStepper(false);
@@ -332,9 +445,61 @@ async function loadSample(sampleId) {
     }
 }
 
+function addToHistory(analysis) {
+    const exists = AppState.history.find(h => h.id === analysis.id);
+    if (!exists) {
+        AppState.history.unshift({
+            id: analysis.id,
+            date: analysis.analysis_timestamp,
+            title: analysis.overview.title,
+            client: analysis.overview.client,
+            score: analysis.scoring.overall_score,
+            verdict: analysis.scoring.verdict
+        });
+        renderHistoryTable();
+    }
+}
+
+function renderHistoryTable() {
+    const tbody = document.getElementById('history-table-body');
+    const badge = document.getElementById('history-badge');
+    if (badge) badge.textContent = AppState.history.length;
+    if (!tbody) return;
+
+    tbody.innerHTML = AppState.history.map(item => {
+        const isGo = item.verdict === 'GO';
+        const isReserve = item.verdict === 'GO_AVEC_RESERVES';
+        const badgeClass = isGo 
+            ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+            : isReserve 
+            ? 'bg-amber-50 text-amber-700 border-amber-200' 
+            : 'bg-rose-50 text-rose-700 border-rose-200';
+
+        const label = isGo ? 'GO (Favorable)' : isReserve ? 'GO AVEC RÉSERVES' : 'NO-GO (Risqué)';
+
+        return `
+            <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="p-3 font-mono font-bold text-slate-700">${item.id}</td>
+                <td class="p-3 text-slate-500 text-[11px]">${item.date}</td>
+                <td class="p-3 font-semibold text-slate-900 max-w-xs truncate">${item.title}</td>
+                <td class="p-3 text-slate-600">${item.client}</td>
+                <td class="p-3 text-center">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${badgeClass}">
+                        ${item.score}/100 • ${label}
+                    </span>
+                </td>
+                <td class="p-3 text-right">
+                    <button onclick="switchSidebarTab('nouvelle-analyse')" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[11px] transition-colors">
+                        Consulter
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
 function showProgressStepper(show) {
     const stepper = document.getElementById('progress-stepper');
-    const uploadSec = document.getElementById('upload-section');
     if (stepper) {
         if (show) {
             stepper.classList.remove('hidden');
@@ -349,31 +514,29 @@ function resetStepperSteps() {
     for (let i = 1; i <= 5; i++) {
         const el = document.getElementById(`step-${i}`);
         if (el) {
-            el.classList.remove('text-amber-400', 'text-emerald-400', 'font-bold');
-            el.classList.add('text-slate-400');
+            el.className = 'p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-center gap-2.5 text-xs text-slate-500';
             const icon = el.querySelector('.step-icon');
-            if (icon) icon.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-slate-600 inline-block"></span>`;
+            if (icon) icon.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-slate-300 inline-block"></span>`;
         }
     }
 }
 
 function simulateStepperProgress() {
     const steps = [
-        { id: 'step-1', delay: 200, label: 'Extraction textuelle du CCTP & CCAP...' },
-        { id: 'step-2', delay: 800, label: 'Détection des DTU & Normes CSTB/AFNOR...' },
-        { id: 'step-3', delay: 1400, label: 'Analyse des pénalités & pièges contractuels...' },
-        { id: 'step-4', delay: 2000, label: 'Métré et extraction du bordereau DPGF...' },
-        { id: 'step-5', delay: 2600, label: 'Calcul du score Go / No-Go 60s...' },
+        { id: 'step-1', delay: 200 },
+        { id: 'step-2', delay: 700 },
+        { id: 'step-3', delay: 1300 },
+        { id: 'step-4', delay: 1900 },
+        { id: 'step-5', delay: 2500 },
     ];
 
     steps.forEach(({ id, delay }) => {
         setTimeout(() => {
             const el = document.getElementById(id);
             if (el) {
-                el.classList.remove('text-slate-400');
-                el.classList.add('text-amber-400', 'font-bold');
+                el.className = 'p-3 rounded-lg bg-orange-50 border border-orange-200 flex items-center gap-2.5 text-xs font-bold text-[#EA580C]';
                 const icon = el.querySelector('.step-icon');
-                if (icon) icon.innerHTML = `<span class="w-3 h-3 rounded-full bg-amber-400 animate-ping inline-block"></span>`;
+                if (icon) icon.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-[#EA580C] animate-ping inline-block"></span>`;
             }
         }, delay);
     });
@@ -383,10 +546,9 @@ function finishProgressStepper() {
     for (let i = 1; i <= 5; i++) {
         const el = document.getElementById(`step-${i}`);
         if (el) {
-            el.classList.remove('text-slate-400', 'text-amber-400');
-            el.classList.add('text-emerald-400', 'font-semibold');
+            el.className = 'p-3 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center gap-2.5 text-xs font-semibold text-emerald-800';
             const icon = el.querySelector('.step-icon');
-            if (icon) icon.innerHTML = `<svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>`;
+            if (icon) icon.innerHTML = `<svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>`;
         }
     }
     setTimeout(() => {
@@ -417,7 +579,7 @@ function renderSyntheseTab(analysis) {
     const sc = analysis.scoring;
     const ov = analysis.overview;
 
-    // Verdict Hero Card
+    // Verdict Hero Badge (Light Mode)
     const verdictEl = document.getElementById('verdict-badge');
     const scoreValEl = document.getElementById('score-value');
     const summaryTextEl = document.getElementById('executive-summary-text');
@@ -428,19 +590,19 @@ function renderSyntheseTab(analysis) {
     if (scoreBarEl) scoreBarEl.style.width = `${sc.overall_score}%`;
 
     if (verdictEl) {
-        verdictEl.className = 'px-4 py-2 rounded-xl font-extrabold text-sm uppercase tracking-wider inline-flex items-center gap-2 shadow-sm';
+        verdictEl.className = 'px-4 py-2 rounded-lg font-extrabold text-sm uppercase tracking-wider inline-flex items-center gap-2 border';
         if (sc.verdict === 'GO') {
-            verdictEl.classList.add('bg-emerald-500/20', 'text-emerald-300', 'border', 'border-emerald-500/40');
-            verdictEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span> GO FRANCO - MARCHÉ FAVORABLE`;
-            if (scoreBarEl) scoreBarEl.className = 'h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-1000';
+            verdictEl.classList.add('bg-emerald-50', 'text-emerald-800', 'border-emerald-300');
+            verdictEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> GO FRANCO - MARCHÉ FAVORABLE`;
+            if (scoreBarEl) scoreBarEl.className = 'h-full bg-emerald-600 rounded-full transition-all duration-1000';
         } else if (sc.verdict === 'GO_AVEC_RESERVES') {
-            verdictEl.classList.add('bg-amber-500/20', 'text-amber-300', 'border', 'border-amber-500/40');
-            verdictEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> GO AVEC RÉSERVES - VIGILANCE CONTRACTUELLE`;
-            if (scoreBarEl) scoreBarEl.className = 'h-full bg-gradient-to-r from-amber-500 to-yellow-400 rounded-full transition-all duration-1000';
+            verdictEl.classList.add('bg-amber-50', 'text-amber-800', 'border-amber-300');
+            verdictEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> GO AVEC RÉSERVES - VIGILANCE REQUISE`;
+            if (scoreBarEl) scoreBarEl.className = 'h-full bg-[#EA580C] rounded-full transition-all duration-1000';
         } else {
-            verdictEl.classList.add('bg-rose-500/20', 'text-rose-300', 'border', 'border-rose-500/40');
-            verdictEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span> NO-GO - RISQUES ÉLEVÉS DÉCONSEILLÉ`;
-            if (scoreBarEl) scoreBarEl.className = 'h-full bg-gradient-to-r from-rose-600 to-rose-400 rounded-full transition-all duration-1000';
+            verdictEl.classList.add('bg-rose-50', 'text-rose-800', 'border-rose-300');
+            verdictEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span> NO-GO - RISQUES ÉLEVÉS DÉCONSEILLÉ`;
+            if (scoreBarEl) scoreBarEl.className = 'h-full bg-rose-600 rounded-full transition-all duration-1000';
         }
     }
 
@@ -472,9 +634,9 @@ function setDimensionScore(idPrefix, score) {
     if (textEl) textEl.textContent = `${score}%`;
     if (barEl) {
         barEl.style.width = `${score}%`;
-        if (score >= 75) barEl.className = 'h-1.5 bg-emerald-400 rounded-full';
-        else if (score >= 50) barEl.className = 'h-1.5 bg-amber-400 rounded-full';
-        else barEl.className = 'h-1.5 bg-rose-500 rounded-full';
+        if (score >= 75) barEl.className = 'h-1.5 bg-emerald-600 rounded-full';
+        else if (score >= 50) barEl.className = 'h-1.5 bg-[#EA580C] rounded-full';
+        else barEl.className = 'h-1.5 bg-rose-600 rounded-full';
     }
 }
 
@@ -486,10 +648,10 @@ function renderInsightList(containerId, items, color) {
         return;
     }
     const colorClasses = {
-        rose: 'text-rose-200 bg-rose-950/40 border-rose-800/50',
-        amber: 'text-amber-200 bg-amber-950/40 border-amber-800/50',
-        emerald: 'text-emerald-200 bg-emerald-950/40 border-emerald-800/50',
-    }[color] || 'text-slate-300 bg-slate-800/40 border-slate-700';
+        rose: 'text-rose-900 bg-rose-50/80 border-rose-200',
+        amber: 'text-amber-900 bg-amber-50/80 border-amber-200',
+        emerald: 'text-emerald-900 bg-emerald-50/80 border-emerald-200',
+    }[color] || 'text-slate-700 bg-slate-50 border-slate-200';
 
     container.innerHTML = items.map(item => `
         <li class="p-2.5 rounded-lg border text-xs leading-relaxed ${colorClasses}">
@@ -506,13 +668,13 @@ function renderNormesTab(analysis) {
         if (!analysis.technical_norms || analysis.technical_norms.length === 0) {
             normsTableBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 text-xs">Aucune norme spécifique détectée dans ce CCTP.</td></tr>`;
         } else {
-            normsTableBody.innerHTML = analysis.technical_norms.map((norm, idx) => `
-                <tr class="border-b border-slate-800 hover:bg-slate-800/30 transition-colors">
-                    <td class="p-3 font-mono font-bold text-amber-400 text-xs whitespace-nowrap">${norm.code}</td>
-                    <td class="p-3 text-slate-200 text-xs font-medium">${norm.title}</td>
-                    <td class="p-3 text-slate-400 text-xs">${norm.lot}</td>
-                    <td class="p-3 text-xs"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-800 text-slate-300 border border-slate-700">${norm.requirement_level}</span></td>
-                    <td class="p-3 text-slate-300 text-xs max-w-xs">${norm.description}</td>
+            normsTableBody.innerHTML = analysis.technical_norms.map(norm => `
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                    <td class="p-3 font-mono font-bold text-[#1E3A8A] text-xs whitespace-nowrap">${norm.code}</td>
+                    <td class="p-3 text-slate-800 text-xs font-semibold">${norm.title}</td>
+                    <td class="p-3 text-slate-600 text-xs">${norm.lot}</td>
+                    <td class="p-3 text-xs"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-100 text-slate-700 border border-slate-200">${norm.requirement_level}</span></td>
+                    <td class="p-3 text-slate-600 text-xs max-w-xs">${norm.description}</td>
                 </tr>
             `).join('');
         }
@@ -523,16 +685,16 @@ function renderNormesTab(analysis) {
             certifsContainer.innerHTML = `<p class="text-xs text-slate-400 italic">Aucune qualification spécifique exigée.</p>`;
         } else {
             certifsContainer.innerHTML = analysis.certifications.map(c => `
-                <div class="p-3.5 rounded-xl border border-slate-800 bg-slate-900/60 flex items-start gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                <div class="p-3.5 rounded-lg border border-slate-200 bg-slate-50 flex items-start gap-3">
+                    <div class="w-8 h-8 rounded bg-orange-100 text-[#EA580C] flex items-center justify-center shrink-0">
                         <i data-lucide="award" class="w-4 h-4"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h4 class="text-xs font-bold text-white">${c.name}</h4>
-                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold">Exigé</span>
+                            <h4 class="text-xs font-bold text-slate-900">${c.name}</h4>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 font-semibold">Exigé</span>
                         </div>
-                        <p class="text-[11px] text-slate-400 mt-1">${c.penalty_if_missing}</p>
+                        <p class="text-[11px] text-slate-500 mt-1">${c.penalty_if_missing}</p>
                     </div>
                 </div>
             `).join('');
@@ -552,35 +714,35 @@ function renderRisquesTab(analysis) {
     container.innerHTML = analysis.financial_risks.map(r => {
         const isHigh = r.severity === 'high';
         const badgeClass = isHigh
-            ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+            ? 'bg-rose-50 text-rose-800 border-rose-300'
             : r.severity === 'medium'
-            ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
-            : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
+            ? 'bg-amber-50 text-amber-800 border-amber-300'
+            : 'bg-emerald-50 text-emerald-800 border-emerald-300';
 
-        const badgeText = isHigh ? 'CRITIQUE (HAUT)' : r.severity === 'medium' ? 'MOYEN' : 'STANDARD';
+        const badgeText = isHigh ? 'CRITIQUE (HAUTE)' : r.severity === 'medium' ? 'VIGILANCE' : 'STANDARD';
 
         return `
-            <div class="p-4 rounded-xl border border-slate-800 bg-slate-900/60 hover:border-slate-700 transition-all">
+            <div class="p-4 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition-all shadow-sm">
                 <div class="flex items-center justify-between mb-2">
-                    <h4 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i data-lucide="shield-alert" class="w-4 h-4 text-amber-400"></i>
+                    <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <i data-lucide="shield-alert" class="w-4 h-4 text-[#EA580C]"></i>
                         ${r.type}
                     </h4>
-                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${badgeClass}">
+                    <span class="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${badgeClass}">
                         ${badgeText}
                     </span>
                 </div>
-                <div class="mb-3 bg-slate-950/60 p-3 rounded-lg border border-slate-800/80">
-                    <p class="text-xs text-slate-300 italic">« ${r.clause_text} »</p>
+                <div class="mb-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                    <p class="text-xs text-slate-700 italic">« ${r.clause_text} »</p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                    <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Impact Financier :</span>
-                        <p class="text-slate-200">${r.impact_estimate}</p>
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Impact Financier :</span>
+                        <p class="text-slate-800">${r.impact_estimate}</p>
                     </div>
-                    <div class="bg-amber-950/20 p-2.5 rounded-lg border border-amber-800/30">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400 block mb-1">Conseil / Parade Artisan :</span>
-                        <p class="text-amber-200">${r.recommendation}</p>
+                    <div class="bg-orange-50/60 p-3 rounded-lg border border-orange-200">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-[#EA580C] block mb-1">Conseil / Parade Artisan :</span>
+                        <p class="text-orange-950 font-medium">${r.recommendation}</p>
                     </div>
                 </div>
             </div>
@@ -606,19 +768,19 @@ function renderDpgfTable() {
 
     if (countBadge) countBadge.textContent = `${items.length} postes métrés`;
 
-    tbody.innerHTML = filtered.map((item, idx) => {
+    tbody.innerHTML = filtered.map(item => {
         const realIdx = items.indexOf(item);
         const pu = item.unit_price || 0;
         const total = pu * item.quantity;
         return `
-            <tr class="border-b border-slate-800/80 hover:bg-slate-800/40 transition-colors">
-                <td class="p-3 font-mono font-bold text-amber-400 text-xs text-center">${item.item_number}</td>
-                <td class="p-3 text-slate-200 text-xs font-medium">
+            <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="p-3 font-mono font-bold text-[#1E3A8A] text-xs text-center">${item.item_number}</td>
+                <td class="p-3 text-slate-900 text-xs font-semibold">
                     <div>${item.designation}</div>
-                    <span class="text-[10px] text-slate-500">${item.lot}</span>
+                    <span class="text-[10px] text-slate-500 font-normal">${item.lot}</span>
                 </td>
-                <td class="p-3 text-slate-400 text-xs text-center font-mono">${item.unit}</td>
-                <td class="p-3 text-slate-300 text-xs text-right font-mono font-semibold">${item.quantity.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 2 })}</td>
+                <td class="p-3 text-slate-600 text-xs text-center font-mono">${item.unit}</td>
+                <td class="p-3 text-slate-800 text-xs text-right font-mono font-bold">${item.quantity.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 2 })}</td>
                 <td class="p-2 text-right">
                     <input 
                         type="number" 
@@ -627,10 +789,10 @@ function renderDpgfTable() {
                         value="${pu > 0 ? pu.toFixed(2) : ''}" 
                         placeholder="0.00" 
                         onchange="updateDpgfPrice(${realIdx}, this.value)"
-                        class="w-24 px-2 py-1 text-right bg-slate-950 border border-slate-700 rounded text-xs text-white font-mono focus:border-amber-500 focus:outline-none"
+                        class="w-24 px-2 py-1 text-right bg-white border border-slate-300 rounded text-xs text-slate-900 font-mono focus:border-[#EA580C] focus:outline-none"
                     />
                 </td>
-                <td class="p-3 text-emerald-400 text-xs text-right font-mono font-bold">
+                <td class="p-3 text-emerald-700 text-xs text-right font-mono font-bold">
                     ${total > 0 ? total.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }) : '0,00 €'}
                 </td>
             </tr>
@@ -654,7 +816,6 @@ function recalculateMargins() {
         return;
     }
 
-    // Sum total base cost (Déboursé Sec)
     let totalDebourse = 0;
     AppState.currentAnalysis.dpgf_items.forEach(it => {
         const pu = it.unit_price || 0;
@@ -665,7 +826,6 @@ function recalculateMargins() {
     const margePct = AppState.marginSettings.margeNettePct / 100;
     const tvaPct = AppState.marginSettings.tvaPct / 100;
 
-    // Standard BTP coefficient formula: Prix Vente HT = Déboursé Sec / (1 - (FG + Marge))
     const totalDeductions = fgPct + margePct;
     let prixVenteHt = totalDebourse;
     if (totalDeductions < 0.95 && totalDebourse > 0) {
@@ -694,15 +854,15 @@ function renderChecklist() {
     if (!container) return;
 
     container.innerHTML = AppState.checklist.map((item, idx) => `
-        <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-800 bg-slate-900/40 hover:bg-slate-800/40 cursor-pointer transition-colors">
+        <label class="flex items-center gap-3 p-3.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition-colors shadow-sm">
             <input 
                 type="checkbox" 
                 ${item.checked ? 'checked' : ''} 
                 onchange="toggleChecklistItem(${idx})"
-                class="w-4 h-4 rounded border-slate-700 text-amber-500 focus:ring-amber-500 bg-slate-950"
+                class="w-4 h-4 rounded border-slate-300 text-[#EA580C] focus:ring-[#EA580C]"
             />
-            <span class="text-xs text-slate-300 font-medium select-none flex-1">${item.label}</span>
-            ${item.required ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-semibold">Indispensable</span>' : ''}
+            <span class="text-xs text-slate-800 font-medium select-none flex-1">${item.label}</span>
+            ${item.required ? '<span class="text-[10px] px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-semibold border border-rose-200">Indispensable</span>' : ''}
         </label>
     `).join('');
 
@@ -734,11 +894,9 @@ function switchTab(tabId) {
 
     document.querySelectorAll('.nav-tab-btn').forEach(btn => {
         if (btn.dataset.tab === tabId) {
-            btn.classList.add('border-amber-400', 'text-amber-400', 'bg-slate-800/60');
-            btn.classList.remove('border-transparent', 'text-slate-400');
+            btn.className = 'nav-tab-btn px-3.5 py-2 rounded-lg text-xs font-bold bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center gap-2 transition-all';
         } else {
-            btn.classList.remove('border-amber-400', 'text-amber-400', 'bg-slate-800/60');
-            btn.classList.add('border-transparent', 'text-slate-400');
+            btn.className = 'nav-tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 flex items-center gap-2 transition-all';
         }
     });
 
@@ -835,10 +993,10 @@ async function checkEngineStatus() {
         if (res.ok) {
             const data = await res.json();
             const isGemini = data.gemini_api_configured || !!AppState.geminiApiKey;
-            updateEngineStatusBadge(isGemini ? 'Gemini AI Connecté' : 'Moteur Expert Local', isGemini);
+            updateEngineStatusBadge(isGemini ? 'Gemini AI Connecté' : 'Moteur Expert BTP Actif', isGemini);
         }
     } catch {
-        updateEngineStatusBadge('Moteur Local Actif', false);
+        updateEngineStatusBadge('Moteur Expert BTP Actif', false);
     }
 }
 
@@ -847,9 +1005,9 @@ function updateEngineStatusBadge(text, isGemini) {
     if (!badge) return;
     badge.textContent = text;
     if (isGemini) {
-        badge.className = 'px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 inline-flex items-center gap-1.5';
+        badge.className = 'px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-[#1E3A8A] border border-blue-200 inline-flex items-center gap-1.5';
     } else {
-        badge.className = 'px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40 inline-flex items-center gap-1.5';
+        badge.className = 'px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 inline-flex items-center gap-1.5';
     }
 }
 
@@ -883,17 +1041,17 @@ function showToast(title, message, type = 'info') {
 
     const toast = document.createElement('div');
     const colorClasses = {
-        success: 'border-emerald-500/50 bg-slate-900 text-emerald-400',
-        warning: 'border-amber-500/50 bg-slate-900 text-amber-400',
-        error: 'border-rose-500/50 bg-slate-900 text-rose-400',
-        info: 'border-sky-500/50 bg-slate-900 text-sky-400',
-    }[type] || 'border-slate-700 bg-slate-900 text-slate-200';
+        success: 'border-emerald-200 bg-white text-emerald-800 shadow-sm',
+        warning: 'border-amber-200 bg-white text-amber-800 shadow-sm',
+        error: 'border-rose-200 bg-white text-rose-800 shadow-sm',
+        info: 'border-blue-200 bg-white text-[#1E3A8A] shadow-sm',
+    }[type] || 'border-slate-200 bg-white text-slate-800 shadow-sm';
 
-    toast.className = `p-3.5 rounded-xl border shadow-xl flex items-start gap-3 transform transition-all duration-300 ease-out translate-y-2 opacity-0 text-xs ${colorClasses}`;
+    toast.className = `p-3.5 rounded-xl border flex items-start gap-3 transform transition-all duration-300 ease-out translate-y-2 opacity-0 text-xs ${colorClasses}`;
     toast.innerHTML = `
         <div class="grow">
-            <h5 class="font-bold text-white text-xs mb-0.5">${title}</h5>
-            <p class="text-slate-300">${message}</p>
+            <h5 class="font-bold text-slate-900 text-xs mb-0.5">${title}</h5>
+            <p class="text-slate-600">${message}</p>
         </div>
     `;
 

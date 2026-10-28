@@ -1,67 +1,171 @@
-/* BTP Public Tender Analyzer - Custom Styles & Print Styles */
+/* BTP Public Tender Analyzer - SaaS B2B Professional Design System (Light Mode) */
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
+:root {
+    --bg-page: #F9FAFB;
+    --card-bg: #FFFFFF;
+    --navy-header: #1E3A8A;
+    --navy-dark: #0F172A;
+    --orange-primary: #EA580C;
+    --orange-hover: #C2410C;
+    --slate-border: #E2E8F0;
+    --slate-text: #334155;
+    --slate-muted: #64748B;
+}
+
 body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: #0b1120;
-    color: #0f172a;
+    background-color: var(--bg-page);
+    color: var(--slate-text);
+    margin: 0;
+    padding: 0;
 }
 
 code, pre, .font-mono {
     font-family: 'JetBrains Mono', monospace;
 }
 
-/* Custom scrollbars */
+/* Custom crisp scrollbars */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
 }
 ::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: #F1F5F9;
 }
 ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 3px;
+    background: #CBD5E1;
+    border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: #94A3B8;
 }
 
-/* Drag & Drop Pulse */
+/* SaaS Card Elevation (Shadcn UI style) */
+.saas-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+    transition: all 0.2s ease;
+}
+
+.saas-card-hover:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    border-color: #CBD5E1;
+}
+
+/* Clean Dropzone without raw dashed effects */
+.saas-dropzone {
+    background-color: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.saas-dropzone:hover {
+    border-color: #EA580C;
+    background-color: #FFF7ED;
+}
+
 .dropzone-active {
-    border-color: #d97706 !important;
-    background-color: #fffbeb !important;
+    border-color: #EA580C !important;
+    background-color: #FFF7ED !important;
     transform: scale(1.005);
+}
+
+/* Primary Button (Industrial Orange CTA) */
+.btn-primary-orange {
+    background-color: #EA580C;
+    color: #FFFFFF;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    box-shadow: 0 1px 2px 0 rgb(234 88 12 / 0.3);
+    transition: all 0.15s ease-in-out;
+}
+
+.btn-primary-orange:hover {
+    background-color: #C2410C;
+    box-shadow: 0 2px 4px 0 rgb(234 88 12 / 0.4);
+}
+
+/* Secondary Button (Navy / Slate Outline) */
+.btn-secondary-navy {
+    background-color: #FFFFFF;
+    color: #1E3A8A;
+    border: 1px solid #CBD5E1;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    transition: all 0.15s ease-in-out;
+}
+
+.btn-secondary-navy:hover {
+    background-color: #F8FAFC;
+    border-color: #1E3A8A;
+}
+
+/* Navigation & Sidebar Active Indicator */
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #475569;
+    transition: all 0.15s ease;
+}
+
+.sidebar-link:hover {
+    background-color: #F1F5F9;
+    color: #0F172A;
+}
+
+.sidebar-link.active {
+    background-color: #EFF6FF;
+    color: #1E3A8A;
+    font-weight: 700;
+    border-left: 3px solid #1E3A8A;
 }
 
 /* Animations */
 @keyframes pulseSubtle {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
+    50% { opacity: 0.5; }
 }
 .pulse-subtle {
-    animation: pulseSubtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    animation: pulseSubtle 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Print Stylesheet for 1-Page Summary Printing */
+/* Print Stylesheet for Executive 1-Page Summary */
 @media print {
     body {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-        font-size: 11pt !important;
+        background-color: #FFFFFF !important;
+        color: #0F172A !important;
+        font-size: 10pt !important;
     }
 
-    /* Hide non-printable elements */
+    aside,
+    nav,
     header,
     footer,
-    #upload-section,
-    #sample-buttons,
-    #nav-tabs,
+    #landing-page-view,
+    #upload-container,
+    #sidebar-container,
+    #progress-stepper,
     .no-print,
-    button:not(.allow-print),
-    #apiKeyModal {
+    button:not(.allow-print) {
         display: none !important;
+    }
+
+    #dashboard-view {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
     #results-section {
@@ -70,17 +174,10 @@ code, pre, .font-mono {
 
     .tab-pane {
         display: block !important;
-        page-break-after: always;
     }
 
-    .shadow-sm, .shadow, .shadow-md, .shadow-lg, .shadow-xl {
+    .saas-card {
         box-shadow: none !important;
-        border: 1px solid #cbd5e1 !important;
-    }
-
-    /* Ensure high contrast for ink */
-    .bg-slate-900, .bg-slate-800 {
-        background-color: #f8fafc !important;
-        color: #0f172a !important;
+        border: 1px solid #CBD5E1 !important;
     }
 }

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="fr" class="dark">
+<html lang="fr" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BTP Public Tender Analyzer | Analyseur d'Appels d'Offres BTP</title>
+    <title>BTP Public Tender Analyzer | Logiciel SaaS d'Analyse d'Appels d'Offres BTP</title>
     
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS (Light Mode) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -13,14 +13,19 @@
             theme: {
                 extend: {
                     colors: {
-                        btp: {
-                            navy: '#0b1120',
-                            card: '#0f172a',
-                            border: '#1e293b',
-                            amber: '#f59e0b',
-                            gold: '#d97706',
-                            emerald: '#10b981',
-                            rose: '#f43f5e'
+                        saas: {
+                            bg: '#F9FAFB',
+                            card: '#FFFFFF',
+                            border: '#E2E8F0',
+                            navy: '#1E3A8A',
+                            navyDark: '#0F172A',
+                            orange: '#EA580C',
+                            orangeHover: '#C2410C',
+                            slate: '#334155',
+                            muted: '#64748B',
+                            emerald: '#059669',
+                            amber: '#D97706',
+                            rose: '#E11D48'
                         }
                     }
                 }
@@ -34,572 +39,1144 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950">
+<body class="bg-[#F9FAFB] text-slate-800 min-h-screen flex flex-col antialiased selection:bg-orange-100 selection:text-orange-900">
 
     <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
 
-    <!-- Header Navigation -->
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-amber-500/20">
-                    <i data-lucide="hard-hat" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <h1 class="text-base font-extrabold tracking-tight text-white">BTP TENDER ANALYZER</h1>
-                        <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">v2.0 PRO</span>
+    <!-- ========================================================================= -->
+    <!-- PART A : LANDING PAGE (SITE VITRINE MARKETING B2B)                         -->
+    <!-- ========================================================================= -->
+    <div id="landing-page-view" class="flex flex-col min-h-screen">
+        <!-- Marketing Navbar -->
+        <header class="border-b border-slate-200 bg-white/95 backdrop-blur sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-3.5 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-[#1E3A8A] flex items-center justify-center text-white shadow-sm">
+                        <i data-lucide="hard-hat" class="w-5 h-5 text-amber-300"></i>
                     </div>
-                    <p class="text-[11px] text-slate-400">Analyseur d'Appels d'Offres & CCTP • Artisans & PME du Bâtiment</p>
-                </div>
-            </div>
-
-            <!-- Engine status badge & config -->
-            <div class="flex items-center gap-3">
-                <span id="engine-status-badge" class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40 inline-flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                    Moteur Expert Local
-                </span>
-
-                <button id="btn-open-api-modal" title="Configurer l'API Gemini" class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition-colors flex items-center gap-1.5">
-                    <i data-lucide="key" class="w-3.5 h-3.5 text-amber-400"></i>
-                    <span>Clé Gemini (Optionnelle)</span>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content Container -->
-    <main class="grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-
-        <!-- Top Banner / Quick Samples -->
-        <div id="sample-buttons" class="bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
-            <div>
-                <h2 class="text-sm font-bold text-white flex items-center gap-2">
-                    <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
-                    Évaluation Instantanée en 60 Secondes
-                </h2>
-                <p class="text-xs text-slate-400 mt-0.5">
-                    Déposez vos pièces de marché ou testez immédiatement le moteur avec un dossier pré-configuré :
-                </p>
-            </div>
-            <div class="flex flex-wrap items-center gap-2 shrink-0">
-                <button id="btn-sample-1" class="px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-semibold text-xs transition-all flex items-center gap-2 shadow-sm">
-                    <i data-lucide="zap" class="w-3.5 h-3.5"></i>
-                    <span>Tester : Lot Électricité (Groupe Scolaire)</span>
-                </button>
-                <button id="btn-sample-2" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-xs transition-all flex items-center gap-2 shadow-sm">
-                    <i data-lucide="layers" class="w-3.5 h-3.5 text-slate-400"></i>
-                    <span>Tester : Lot Plâtrerie (Médiathèque)</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- File Upload Section (Drag & Drop) -->
-        <section id="upload-section" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl relative">
-            <div class="mb-5">
-                <h3 class="text-base font-extrabold text-white flex items-center gap-2">
-                    <i data-lucide="upload-cloud" class="w-5 h-5 text-amber-400"></i>
-                    Dépôt des Pièces de Consultation (DCE)
-                </h3>
-                <p class="text-xs text-slate-400 mt-1">Glissez vos fichiers ou cliquez dans les zones ci-dessous. Zéro dépendance payante, analyse locale instantanée.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <!-- Dropzone 1: CCTP (PDF) -->
-                <div id="cctp-dropzone" class="border-2 border-dashed border-slate-700 hover:border-amber-500/80 bg-slate-950/60 rounded-xl p-6 text-center cursor-pointer transition-all relative group">
-                    <input type="file" id="cctp-file-input" accept=".pdf,.txt" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                    
-                    <div id="cctp-file-label" class="space-y-2">
-                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 mx-auto flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <i data-lucide="file-text" class="w-6 h-6"></i>
-                        </div>
-                        <h4 class="text-sm font-bold text-white">1. CCTP ou CCAP (Obligatoire)</h4>
-                        <p class="text-xs text-slate-400">Fichier PDF ou TXT (Prescriptions techniques & clauses)</p>
-                        <span class="inline-block mt-1 text-[11px] font-semibold text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-full">Glisser-déposer le PDF</span>
-                    </div>
-
-                    <!-- File selected preview -->
-                    <div id="cctp-file-preview" class="hidden flex items-center justify-between p-3 rounded-lg bg-slate-900 border border-amber-500/40 text-left">
-                        <div class="flex items-center gap-3 overflow-hidden">
-                            <i data-lucide="file-check-2" class="w-6 h-6 text-emerald-400 shrink-0"></i>
-                            <div class="truncate">
-                                <div id="cctp-file-name" class="text-xs font-bold text-white truncate">document.pdf</div>
-                                <div id="cctp-file-size" class="text-[10px] text-slate-400">1.2 Mo</div>
-                            </div>
-                        </div>
-                        <button type="button" onclick="removeCctpFile(event)" class="p-1 rounded-md hover:bg-slate-800 text-slate-400 hover:text-rose-400">
-                            <i data-lucide="x" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Dropzone 2: DPGF / BPU (Excel / CSV) -->
-                <div id="dpgf-dropzone" class="border-2 border-dashed border-slate-700 hover:border-emerald-500/80 bg-slate-950/60 rounded-xl p-6 text-center cursor-pointer transition-all relative group">
-                    <input type="file" id="dpgf-file-input" accept=".xlsx,.xls,.csv" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                    
-                    <div id="dpgf-file-label" class="space-y-2">
-                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <i data-lucide="table-2" class="w-6 h-6"></i>
-                        </div>
-                        <h4 class="text-sm font-bold text-white">2. Bordereau DPGF / BPU (Optionnel)</h4>
-                        <p class="text-xs text-slate-400">Grille tarifaire Excel (.xlsx, .xls) ou CSV</p>
-                        <span class="inline-block mt-1 text-[11px] font-semibold text-emerald-400 bg-emerald-400/10 px-2.5 py-0.5 rounded-full">Extraction automatique des prix</span>
-                    </div>
-
-                    <!-- File selected preview -->
-                    <div id="dpgf-file-preview" class="hidden flex items-center justify-between p-3 rounded-lg bg-slate-900 border border-emerald-500/40 text-left">
-                        <div class="flex items-center gap-3 overflow-hidden">
-                            <i data-lucide="file-spreadsheet" class="w-6 h-6 text-emerald-400 shrink-0"></i>
-                            <div class="truncate">
-                                <div id="dpgf-file-name" class="text-xs font-bold text-white truncate">dpgf.xlsx</div>
-                                <div id="dpgf-file-size" class="text-[10px] text-slate-400">450 Ko</div>
-                            </div>
-                        </div>
-                        <button type="button" onclick="removeDpgfFile(event)" class="p-1 rounded-md hover:bg-slate-800 text-slate-400 hover:text-rose-400">
-                            <i data-lucide="x" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action Button -->
-            <div class="mt-6 flex flex-col sm:flex-row items-center justify-end gap-3">
-                <button id="btn-launch-analysis" disabled class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition-all opacity-50 cursor-not-allowed">
-                    <i data-lucide="sparkles" class="w-4 h-4"></i>
-                    <span>Lancer l'Analyse Express (60s)</span>
-                </button>
-            </div>
-        </section>
-
-        <!-- Progress Stepper (Animated) -->
-        <section id="progress-stepper" class="hidden bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-                Traitement du dossier d'appel d'offres en cours...
-            </h4>
-            <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
-                <div id="step-1" class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center gap-2.5 text-xs text-slate-400">
-                    <span class="step-icon shrink-0"><span class="w-2.5 h-2.5 rounded-full bg-slate-600 inline-block"></span></span>
-                    <span>1. Extraction PDF</span>
-                </div>
-                <div id="step-2" class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center gap-2.5 text-xs text-slate-400">
-                    <span class="step-icon shrink-0"><span class="w-2.5 h-2.5 rounded-full bg-slate-600 inline-block"></span></span>
-                    <span>2. Scan Normes DTU</span>
-                </div>
-                <div id="step-3" class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center gap-2.5 text-xs text-slate-400">
-                    <span class="step-icon shrink-0"><span class="w-2.5 h-2.5 rounded-full bg-slate-600 inline-block"></span></span>
-                    <span>3. Pièges CCAP</span>
-                </div>
-                <div id="step-4" class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center gap-2.5 text-xs text-slate-400">
-                    <span class="step-icon shrink-0"><span class="w-2.5 h-2.5 rounded-full bg-slate-600 inline-block"></span></span>
-                    <span>4. Grille DPGF</span>
-                </div>
-                <div id="step-5" class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center gap-2.5 text-xs text-slate-400">
-                    <span class="step-icon shrink-0"><span class="w-2.5 h-2.5 rounded-full bg-slate-600 inline-block"></span></span>
-                    <span>5. Fiche Go/No-Go</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Results Section (Initially Hidden) -->
-        <section id="results-section" class="hidden space-y-6">
-
-            <!-- Sticky Navigation Tabs & Export Toolbar -->
-            <div id="nav-tabs" class="bg-slate-900 border border-slate-800 rounded-2xl p-2 flex flex-col md:flex-row items-center justify-between gap-3 shadow-xl">
-                <!-- Fluid Tabs -->
-                <div class="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
-                    <button data-tab="synthese" class="nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold border border-amber-400 text-amber-400 bg-slate-800/60 flex items-center gap-2 transition-all">
-                        <i data-lucide="gauge" class="w-3.5 h-3.5"></i>
-                        <span>Synthèse 60s (Décision)</span>
-                    </button>
-                    <button data-tab="normes" class="nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold border border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition-all">
-                        <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
-                        <span>Normes DTU & Qualifs</span>
-                    </button>
-                    <button data-tab="risques" class="nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold border border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition-all">
-                        <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
-                        <span>Clauses & Risques CCAP</span>
-                    </button>
-                    <button data-tab="dpgf" class="nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold border border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition-all">
-                        <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
-                        <span>Grille DPGF & Marges</span>
-                    </button>
-                    <button data-tab="checklist" class="nav-tab-btn px-4 py-2 rounded-xl text-xs font-bold border border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition-all">
-                        <i data-lucide="list-checks" class="w-3.5 h-3.5"></i>
-                        <span>Checklist Dépôt</span>
-                    </button>
-                </div>
-
-                <!-- Export Toolbar -->
-                <div class="flex items-center gap-2 shrink-0 w-full md:w-auto justify-end">
-                    <button id="btn-export-pdf" class="px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-bold flex items-center gap-1.5 transition-colors" title="Télécharger la fiche executive en PDF">
-                        <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
-                        <span>PDF 1-Page</span>
-                    </button>
-                    <button id="btn-export-excel" class="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5 transition-colors" title="Télécharger le classeur Excel complet">
-                        <i data-lucide="sheet" class="w-3.5 h-3.5"></i>
-                        <span>Excel Chiffrage</span>
-                    </button>
-                    <button id="btn-export-csv" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors" title="Export CSV pour logiciel de devis">
-                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                        <span>CSV</span>
-                    </button>
-                    <button id="btn-print-summary" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors" title="Imprimer la fiche décision">
-                        <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-                        <span>Imprimer</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- TAB 1: SYNTHÈSE 60S (DÉCISION HERO) -->
-            <div id="tab-content-synthese" class="tab-pane space-y-6">
-                <!-- Hero Verdict Card -->
-                <div class="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-                    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 border-b border-slate-800">
-                        <div class="space-y-2">
-                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Avis d'opportunité express artisan (60 secondes)</span>
-                            <div class="flex flex-wrap items-center gap-3">
-                                <div id="verdict-badge" class="px-4 py-2 rounded-xl font-extrabold text-sm uppercase tracking-wider inline-flex items-center gap-2 shadow-sm">
-                                    VERDICT INITIAL
-                                </div>
-                                <span class="text-xs text-slate-400 font-mono" id="meta-id">Réf: AO-000</span>
-                            </div>
-                            <p id="executive-summary-text" class="text-xs md:text-sm text-slate-200 max-w-3xl leading-relaxed pt-1">
-                                Chargement de l'analyse...
-                            </p>
-                        </div>
-
-                        <!-- Overall Score Gauge -->
-                        <div class="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-900/80 border border-slate-800 w-full lg:w-48 shrink-0 text-center">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Score Faisabilité</span>
-                            <div id="score-value" class="text-3xl font-black text-white font-mono my-1">--/100</div>
-                            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden mt-1">
-                                <div id="score-progress-bar" class="h-full bg-amber-400 rounded-full" style="width: 0%"></div>
-                            </div>
-                            <span id="meta-engine" class="text-[9px] text-slate-400 mt-2 truncate max-w-full">Moteur Expert BTP</span>
-                        </div>
-                    </div>
-
-                    <!-- 4 Dimension Gauges -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-5">
-                        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-                            <div class="flex justify-between text-[11px] font-semibold text-slate-300 mb-1">
-                                <span>Planning & Délais</span>
-                                <span id="dim-delay-val" class="font-mono text-amber-400">--%</span>
-                            </div>
-                            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                <div id="dim-delay-bar" class="h-full bg-amber-400 rounded-full" style="width: 0%"></div>
-                            </div>
-                        </div>
-
-                        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-                            <div class="flex justify-between text-[11px] font-semibold text-slate-300 mb-1">
-                                <span>Sécurité Financière</span>
-                                <span id="dim-finance-val" class="font-mono text-amber-400">--%</span>
-                            </div>
-                            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                <div id="dim-finance-bar" class="h-full bg-amber-400 rounded-full" style="width: 0%"></div>
-                            </div>
-                        </div>
-
-                        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-                            <div class="flex justify-between text-[11px] font-semibold text-slate-300 mb-1">
-                                <span>Normes & DTU</span>
-                                <span id="dim-norms-val" class="font-mono text-amber-400">--%</span>
-                            </div>
-                            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                <div id="dim-norms-bar" class="h-full bg-amber-400 rounded-full" style="width: 0%"></div>
-                            </div>
-                        </div>
-
-                        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-                            <div class="flex justify-between text-[11px] font-semibold text-slate-300 mb-1">
-                                <span>Dossier Administratif</span>
-                                <span id="dim-admin-val" class="font-mono text-amber-400">--%</span>
-                            </div>
-                            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                <div id="dim-admin-bar" class="h-full bg-amber-400 rounded-full" style="width: 0%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project Key Facts Grid -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
-                        <i data-lucide="building" class="w-4 h-4 text-amber-400"></i>
-                        Données Générales du Marché
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
-                        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Objet du Marché :</span>
-                            <p id="ov-title" class="font-semibold text-white">--</p>
-                        </div>
-                        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Maître d'Ouvrage (Acheteur) :</span>
-                            <p id="ov-client" class="font-semibold text-white">--</p>
-                        </div>
-                        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Lieu du Chantier :</span>
-                            <p id="ov-location" class="font-semibold text-white">--</p>
-                        </div>
-                        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Date Limite de Remise (DLRO) :</span>
-                            <p id="ov-deadline" class="font-bold text-amber-400">--</p>
-                        </div>
-                        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Délai Global des Travaux :</span>
-                            <p id="ov-duration" class="font-semibold text-white">--</p>
-                        </div>
-                        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Lots de Travaux :</span>
-                            <p id="ov-lots" class="font-semibold text-white">--</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3 Columns of Insights: Red flags, Warnings, Green lights -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                    <!-- Red Flags -->
-                    <div class="bg-slate-900 border border-rose-900/40 rounded-2xl p-5 shadow-xl">
-                        <div class="flex items-center gap-2 mb-3 text-rose-400">
-                            <i data-lucide="octagon-alert" class="w-4 h-4"></i>
-                            <h4 class="text-xs font-bold uppercase tracking-wider">Points Bloquants (Red Flags)</h4>
-                        </div>
-                        <ul id="list-red-flags" class="space-y-2"></ul>
-                    </div>
-
-                    <!-- Amber Warnings -->
-                    <div class="bg-slate-900 border border-amber-900/40 rounded-2xl p-5 shadow-xl">
-                        <div class="flex items-center gap-2 mb-3 text-amber-400">
-                            <i data-lucide="alert-triangle" class="w-4 h-4"></i>
-                            <h4 class="text-xs font-bold uppercase tracking-wider">Points de Vigilance (Risques)</h4>
-                        </div>
-                        <ul id="list-warnings" class="space-y-2"></ul>
-                    </div>
-
-                    <!-- Green Lights -->
-                    <div class="bg-slate-900 border border-emerald-900/40 rounded-2xl p-5 shadow-xl">
-                        <div class="flex items-center gap-2 mb-3 text-emerald-400">
-                            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
-                            <h4 class="text-xs font-bold uppercase tracking-wider">Atouts & Points Favorables</h4>
-                        </div>
-                        <ul id="list-green-lights" class="space-y-2"></ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 2: NORMES DTU & QUALIFICATIONS -->
-            <div id="tab-content-normes" class="tab-pane hidden space-y-6">
-                <!-- Certifications Required -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
-                        <i data-lucide="shield-check" class="w-4 h-4 text-amber-400"></i>
-                        Qualifications Professionnelles & Attestations Exigées
-                    </h3>
-                    <div id="certifs-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
-                </div>
-
-                <!-- Technical Norms Table -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                            <i data-lucide="book-open" class="w-4 h-4 text-amber-400"></i>
-                            Prescriptions Techniques & Normes DTU Applicables (CSTB / AFNOR)
-                        </h3>
-                    </div>
-
-                    <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950/60">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-900 text-slate-400 font-bold uppercase text-[10px] tracking-wider border-b border-slate-800">
-                                <tr>
-                                    <th class="p-3">Code / DTU</th>
-                                    <th class="p-3">Intitulé Officiel</th>
-                                    <th class="p-3">Corps d'état / Lot</th>
-                                    <th class="p-3">Niveau</th>
-                                    <th class="p-3">Exigence Relevée dans le CCTP</th>
-                                </tr>
-                            </thead>
-                            <tbody id="norms-table-body" class="divide-y divide-slate-800/80"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 3: CLAUSES & RISQUES FINANCIERS CCAP -->
-            <div id="tab-content-risques" class="tab-pane hidden space-y-6">
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                                <i data-lucide="scale" class="w-4 h-4 text-amber-400"></i>
-                                Cartographie des Clauses Contractuelles & Risques Financiers
-                            </h3>
-                            <p class="text-xs text-slate-400 mt-1">Analyse des pénalités journalières de retard, retenues de garantie, comptes prorata et conditions de révision des prix.</p>
-                        </div>
-                    </div>
-                    
-                    <div id="financial-risks-container" class="space-y-4"></div>
-                </div>
-            </div>
-
-            <!-- TAB 4: GRILLE DPGF & SIMULATEUR DE MARGES -->
-            <div id="tab-content-dpgf" class="tab-pane hidden space-y-6">
-                <!-- Margin Simulator Bar -->
-                <div class="bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div>
                         <div class="flex items-center gap-2">
-                            <i data-lucide="calculator" class="w-4 h-4 text-emerald-400"></i>
-                            <h3 class="text-xs font-bold uppercase tracking-wider text-white">Simulateur de Prix de Vente & Marge BTP</h3>
+                            <span class="text-base font-extrabold tracking-tight text-[#1E3A8A]">BTP TENDER ANALYZER</span>
+                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-blue-50 text-[#1E3A8A] border border-blue-200">SaaS B2B Pro</span>
                         </div>
-                        <span id="dpgf-item-count" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-mono">0 poste</span>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800">
-                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Coefficient Frais Généraux (%) :</label>
-                            <input type="number" id="calc-fg" value="12" step="0.5" min="0" max="40" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white font-mono focus:border-amber-400 focus:outline-none">
-                            <span class="text-[10px] text-slate-500 mt-1 block">Assurances, bureau, véhicules, outillage</span>
-                        </div>
-                        <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800">
-                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Marge Nette Ciblée (%) :</label>
-                            <input type="number" id="calc-marge" value="15" step="0.5" min="0" max="50" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white font-mono focus:border-amber-400 focus:outline-none">
-                            <span class="text-[10px] text-slate-500 mt-1 block">Bénéfice net artisan après impôts</span>
-                        </div>
-                        <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800">
-                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Taux de TVA :</label>
-                            <select id="calc-tva" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white font-mono focus:border-amber-400 focus:outline-none">
-                                <option value="20">20.0% (Neuf & Rénovation standard)</option>
-                                <option value="10">10.0% (Amélioration logement > 2 ans)</option>
-                                <option value="5.5">5.5% (Rénovation énergétique)</option>
-                            </select>
-                            <span class="text-[10px] text-slate-500 mt-1 block">Selon nature des travaux</span>
-                        </div>
-                    </div>
-
-                    <!-- Live KPI Cards -->
-                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 pt-2">
-                        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-                            <span class="text-[10px] font-bold text-slate-400 block uppercase">1. Déboursé Sec</span>
-                            <div id="sim-debourse" class="text-sm font-bold font-mono text-white mt-1">0,00 €</div>
-                            <span class="text-[9px] text-slate-500">Fournitures + MO direct</span>
-                        </div>
-                        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-                            <span class="text-[10px] font-bold text-slate-400 block uppercase">2. Marge Nette (€)</span>
-                            <div id="sim-marge-montant" class="text-sm font-bold font-mono text-amber-400 mt-1">0,00 €</div>
-                            <span class="text-[9px] text-slate-500">Bénéfice estimé</span>
-                        </div>
-                        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-                            <span class="text-[10px] font-bold text-slate-400 block uppercase">3. Prix Vente HT</span>
-                            <div id="sim-vente-ht" class="text-sm font-bold font-mono text-emerald-400 mt-1">0,00 €</div>
-                            <span class="text-[9px] text-slate-500">Montant soumission HT</span>
-                        </div>
-                        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-                            <span class="text-[10px] font-bold text-slate-400 block uppercase">4. Montant TVA</span>
-                            <div id="sim-tva" class="text-sm font-bold font-mono text-slate-300 mt-1">0,00 €</div>
-                            <span class="text-[9px] text-slate-500">TVA collectée</span>
-                        </div>
-                        <div class="bg-emerald-950/40 p-3 rounded-xl border border-emerald-800/50">
-                            <span class="text-[10px] font-bold text-emerald-300 block uppercase">5. TOTAL TTC</span>
-                            <div id="sim-total-ttc" class="text-sm font-black font-mono text-emerald-300 mt-1">0,00 €</div>
-                            <span class="text-[9px] text-emerald-400">Total client final</span>
-                        </div>
+                        <p class="text-[11px] text-slate-500 font-medium">L'IA d'aide à la décision pour artisans & PME du bâtiment</p>
                     </div>
                 </div>
 
-                <!-- DPGF Table Container -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                            <i data-lucide="list" class="w-4 h-4 text-amber-400"></i>
-                            Détail des Postes du Bordereau de Prix (DPGF)
-                        </h4>
-                        <div class="w-full sm:w-64">
-                            <input type="text" id="dpgf-search-input" placeholder="Filtrer un poste (ex: LED, TGBT, câble)..." class="w-full px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none">
-                        </div>
-                    </div>
+                <!-- Navigation Links -->
+                <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+                    <a href="#comment-ca-marche" class="hover:text-[#1E3A8A] transition-colors">Comment ça marche</a>
+                    <a href="#fonctionnalites" class="hover:text-[#1E3A8A] transition-colors">Fonctionnalités</a>
+                    <a href="#tarifs" class="hover:text-[#1E3A8A] transition-colors">Tarifs & Abonnements</a>
+                    <a href="#faq" class="hover:text-[#1E3A8A] transition-colors">FAQ</a>
+                </nav>
 
-                    <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950/60 max-h-[600px] overflow-y-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-900 text-slate-400 font-bold uppercase text-[10px] tracking-wider border-b border-slate-800 sticky top-0 z-10">
-                                <tr>
-                                    <th class="p-3 text-center w-14">N°</th>
-                                    <th class="p-3">Désignation des Prestations</th>
-                                    <th class="p-3 text-center w-16">Unité</th>
-                                    <th class="p-3 text-right w-24">Quantité</th>
-                                    <th class="p-3 text-right w-32">P.U. H.T. (€)</th>
-                                    <th class="p-3 text-right w-36">Total H.T. (€)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dpgf-table-body" class="divide-y divide-slate-800/80"></tbody>
-                        </table>
-                    </div>
+                <!-- Top CTAs -->
+                <div class="flex items-center gap-3">
+                    <button onclick="switchToDashboard()" class="text-xs font-semibold text-slate-700 hover:text-[#1E3A8A] px-3 py-2 transition-colors">
+                        Se connecter
+                    </button>
+                    <button onclick="switchToDashboard()" class="btn-primary-orange text-xs flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        <span>Accéder au Dashboard</span>
+                    </button>
                 </div>
             </div>
+        </header>
 
-            <!-- TAB 5: CHECKLIST DÉPÔT D'OFFRE -->
-            <div id="tab-content-checklist" class="tab-pane hidden space-y-6">
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                        <div>
-                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                                <i data-lucide="check-square" class="w-4 h-4 text-emerald-400"></i>
-                                Dossier de Candidature : Pièces Justificatives Obligatoires
-                            </h3>
-                            <p class="text-xs text-slate-400 mt-0.5">Vérifiez que toutes les pièces sont prêtes avant de déposer sur le profil d'acheteur (AWS, Maximilien, etc.).</p>
-                        </div>
-                        <div class="text-right">
-                            <span id="checklist-count" class="text-xs font-mono font-bold text-amber-400">0/8 pièces prêtes</span>
-                            <div class="w-32 bg-slate-800 h-2 rounded-full overflow-hidden mt-1">
-                                <div id="checklist-bar" class="h-full bg-emerald-400 rounded-full" style="width: 0%"></div>
-                            </div>
-                        </div>
+        <!-- Hero Section -->
+        <section class="pt-16 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white via-slate-50/50 to-[#F9FAFB] border-b border-slate-200">
+            <div class="max-w-5xl mx-auto text-center space-y-6">
+                <!-- Trust Pill -->
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-[#1E3A8A] text-xs font-semibold shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"></span>
+                    <span>Conforme CCAG Travaux 2026 & Normes CSTB / AFNOR</span>
+                </div>
+
+                <!-- Main Catchphrase -->
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.15]">
+                    Analysez vos dossiers d'appels d'offres en <span class="text-[#EA580C]">60 secondes chrono</span>
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="max-w-3xl mx-auto text-base sm:text-lg text-slate-600 leading-relaxed">
+                    Ne perdez plus 3 heures à éplucher les CCTP de 150 pages après votre journée de chantier. 
+                    Notre technologie inspecte vos pièces de consultation, détecte les <strong>pénalités de retard cachées</strong>, valide les <strong>normes DTU obligatoires</strong> et sécurise vos marges sur votre bordereau DPGF.
+                </p>
+
+                <!-- Hero Action Buttons -->
+                <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <button onclick="switchToDashboard()" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#EA580C] hover:bg-[#C2410C] text-white font-bold text-base shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2.5 transition-all">
+                        <i data-lucide="file-search" class="w-5 h-5"></i>
+                        <span>Analyser un dossier gratuitement</span>
+                    </button>
+                    <button onclick="switchToDashboardAndLoadSample('1')" class="w-full sm:w-auto px-6 py-4 rounded-xl bg-white hover:bg-slate-50 text-[#1E3A8A] font-bold text-sm border border-slate-300 shadow-sm flex items-center justify-center gap-2 transition-all">
+                        <i data-lucide="play-circle" class="w-4 h-4 text-[#EA580C]"></i>
+                        <span>Voir la démo (Lot Électricité)</span>
+                    </button>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="pt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto text-left">
+                    <div class="saas-card p-4">
+                        <div class="text-2xl font-black text-[#1E3A8A]">60 sec</div>
+                        <div class="text-xs text-slate-500 font-medium mt-0.5">Pour un verdict Go / No-Go</div>
                     </div>
+                    <div class="saas-card p-4">
+                        <div class="text-2xl font-black text-[#EA580C]">100%</div>
+                        <div class="text-xs text-slate-500 font-medium mt-0.5">Règles CSTB & DTU intégrées</div>
+                    </div>
+                    <div class="saas-card p-4">
+                        <div class="text-2xl font-black text-emerald-600">0 €</div>
+                        <div class="text-xs text-slate-500 font-medium mt-0.5">Surprise sur les pénalités CCAP</div>
+                    </div>
+                    <div class="saas-card p-4">
+                        <div class="text-2xl font-black text-slate-800">+18%</div>
+                        <div class="text-xs text-slate-500 font-medium mt-0.5">Marge nette moyenne sécurisée</div>
+                    </div>
+                </div>
 
-                    <div id="checklist-items" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                <!-- Trades Badges -->
+                <div class="pt-8 flex flex-wrap items-center justify-center gap-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    <span>Certifications reconnues :</span>
+                    <span class="px-2.5 py-1 rounded bg-slate-100 text-slate-700 font-bold border border-slate-200">QUALIFELEC</span>
+                    <span class="px-2.5 py-1 rounded bg-slate-100 text-slate-700 font-bold border border-slate-200">QUALIBAT</span>
+                    <span class="px-2.5 py-1 rounded bg-slate-100 text-slate-700 font-bold border border-slate-200">LABEL RGE</span>
+                    <span class="px-2.5 py-1 rounded bg-slate-100 text-slate-700 font-bold border border-slate-200">CONSUEL</span>
+                    <span class="px-2.5 py-1 rounded bg-slate-100 text-slate-700 font-bold border border-slate-200">ASSURANCE DÉCENNALE</span>
                 </div>
             </div>
         </section>
-    </main>
 
-    <!-- Modal: Gemini API Key Config -->
-    <div id="api-key-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+        <!-- Section : Comment ça marche en 3 étapes -->
+        <section id="comment-ca-marche" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#EA580C]">Processus Simplifié</span>
+                <h2 class="text-3xl font-extrabold text-[#1E3A8A]">Comment ça marche en 3 étapes ?</h2>
+                <p class="text-sm text-slate-600">Un flux de travail fluide et pensé pour les contraintes de temps des chefs d'entreprise du BTP.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Step 1 -->
+                <div class="saas-card p-6 relative">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 border border-blue-200 text-[#1E3A8A] flex items-center justify-center font-black text-lg mb-4">
+                        1
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900 mb-2">Importez vos pièces de marché</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Glissez votre CCTP ou CCAP au format PDF, ainsi que votre grille tarifaire DPGF ou BPU sous Excel (.xlsx) ou CSV.
+                    </p>
+                    <div class="mt-4 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-medium text-slate-500">
+                        <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                        <span>Compatibilité tous DCE publics & privés</span>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="saas-card p-6 relative">
+                    <div class="w-12 h-12 rounded-xl bg-orange-50 border border-orange-200 text-[#EA580C] flex items-center justify-center font-black text-lg mb-4">
+                        2
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900 mb-2">Audit réglementaire & pénalités</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        L'algorithme analyse les clauses juridiques, repère les pénalités journalières de retard, le compte prorata et vérifie vos normes DTU.
+                    </p>
+                    <div class="mt-4 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-medium text-slate-500">
+                        <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                        <span>Moteur expert BTP sans frais</span>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="saas-card p-6 relative">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center font-black text-lg mb-4">
+                        3
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900 mb-2">Fiche Décision & Chiffrage</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Obtenez votre score Go / No-Go en 60 secondes, simulez vos coefficients de frais généraux et téléchargez votre synthèse PDF & Excel.
+                    </p>
+                    <div class="mt-4 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-medium text-slate-500">
+                        <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                        <span>Export prêt pour réunion de chiffrage</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section : Fonctionnalités B2B -->
+        <section id="fonctionnalites" class="py-20 px-4 sm:px-6 lg:px-8 bg-white border-y border-slate-200">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-[#1E3A8A]">Avantages Compétitifs</span>
+                    <h2 class="text-3xl font-extrabold text-slate-900">Conçu pour sécuriser chaque réponse à un appel d'offres</h2>
+                    <p class="text-sm text-slate-600">Des outils précis pour transformer les risques contractuels en opportunités de marge.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-6 rounded-xl border border-slate-200 bg-[#F9FAFB] space-y-3">
+                        <div class="w-10 h-10 rounded-lg bg-red-100 text-rose-700 flex items-center justify-center">
+                            <i data-lucide="alert-octagon" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-900">Détection des Pénalités Pièges</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Repérage automatique des pénalités calendaires non plafonnées (ex: 500 €/jour), sans mise en demeure préalable et clause de prix ferme non actualisable.
+                        </p>
+                    </div>
+
+                    <div class="p-6 rounded-xl border border-slate-200 bg-[#F9FAFB] space-y-3">
+                        <div class="w-10 h-10 rounded-lg bg-blue-100 text-[#1E3A8A] flex items-center justify-center">
+                            <i data-lucide="book-check" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-900">Contrôle des DTU & Normes CSTB</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Vérification des normes NF C 15-100, DTU 25.41, DTU 60.1, DTU 40.x et des exigences Consuel ou classements feu exigés pour le chantier.
+                        </p>
+                    </div>
+
+                    <div class="p-6 rounded-xl border border-slate-200 bg-[#F9FAFB] space-y-3">
+                        <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                            <i data-lucide="calculator" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-900">Simulateur de Déboursé Sec & Marges</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Ajustez votre coefficient de frais généraux et votre marge nette cible pour calculer en direct votre prix de soumission HT et TTC sur le bordereau DPGF.
+                        </p>
+                    </div>
+
+                    <div class="p-6 rounded-xl border border-slate-200 bg-[#F9FAFB] space-y-3">
+                        <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
+                            <i data-lucide="award" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-900">Attestations & Qualifications Exigées</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Checklist des qualifications éliminatoires : Qualifelec RGE, Qualibat, AIPR pour travaux de voirie, habilitations électriques et attestation décennale.
+                        </p>
+                    </div>
+
+                    <div class="p-6 rounded-xl border border-slate-200 bg-[#F9FAFB] space-y-3">
+                        <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center">
+                            <i data-lucide="file-output" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-900">Fiche de Synthèse PDF Exécutive</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Téléchargez en un clic une fiche claire sur une page résumant le verdict Go/No-Go, les points bloquants et les atouts du dossier pour vos réunions.
+                        </p>
+                    </div>
+
+                    <div class="p-6 rounded-xl border border-slate-200 bg-[#F9FAFB] space-y-3">
+                        <div class="w-10 h-10 rounded-lg bg-orange-100 text-[#EA580C] flex items-center justify-center">
+                            <i data-lucide="sheet" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-900">Classeur Excel Chiffré & CSV</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Génération automatique d'un classeur Excel multi-onglets avec formules de calculs intégrées, compatible avec vos logiciels de devis BTP (Batappli, Obat, Sage).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section : Tarifs B2B (Abonnement 300€/an + Crédits) -->
+        <section id="tarifs" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#EA580C]">Investissement Transparent</span>
+                <h2 class="text-3xl font-extrabold text-[#1E3A8A]">Des formules adaptées à votre volume de chantiers</h2>
+                <p class="text-sm text-slate-600">Choisissez l'abonnement annuel illimité ou achetez des crédits à la demande sans engagement.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+                <!-- Plan 1 : À la carte / Crédits -->
+                <div class="saas-card p-8 flex flex-col justify-between">
+                    <div>
+                        <div class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Pack Découverte</div>
+                        <h3 class="text-xl font-bold text-slate-900">À la carte / Crédits</h3>
+                        <p class="text-xs text-slate-500 mt-2 mb-6">Pour les artisans répondant ponctuellement à des consultations publiques.</p>
+                        
+                        <div class="flex items-baseline gap-1 mb-6">
+                            <span class="text-4xl font-extrabold text-slate-900">49 €</span>
+                            <span class="text-xs font-semibold text-slate-500">HT / pack de 5</span>
+                        </div>
+
+                        <ul class="space-y-3 text-xs text-slate-600 border-t border-slate-100 pt-6">
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                                <span><strong>5 analyses complètes</strong> CCTP & CCAP</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                                <span>Audit des pénalités de retard et clauses</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                                <span>Contrôle des normes DTU & certifications</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                                <span>Export PDF et Excel des 5 dossiers</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                                <span>Crédits valables <strong>sans limite de temps</strong></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button onclick="switchToDashboard()" class="w-full mt-8 btn-secondary-navy text-xs">
+                        Acheter 5 Crédits (49 € HT)
+                    </button>
+                </div>
+
+                <!-- Plan 2 : Abonnement Annuel Pro (VEDETTE - 300€/an) -->
+                <div class="saas-card p-8 flex flex-col justify-between border-2 border-[#EA580C] relative shadow-lg">
+                    <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#EA580C] text-white text-[11px] font-bold rounded-full uppercase tracking-wider shadow-sm">
+                        Recommandé Artisans & PME
+                    </div>
+                    
+                    <div>
+                        <div class="text-xs font-bold uppercase tracking-wider text-[#EA580C] mb-1">Abonnement Annuel Pro</div>
+                        <h3 class="text-xl font-bold text-slate-900">Analyses Illimitées</h3>
+                        <p class="text-xs text-slate-500 mt-2 mb-6">Pour sécuriser 100% de vos dossiers et rentabiliser votre investissement dès le 1er chantier.</p>
+                        
+                        <div class="flex items-baseline gap-1 mb-1">
+                            <span class="text-4xl font-extrabold text-[#1E3A8A]">300 €</span>
+                            <span class="text-xs font-semibold text-slate-500">HT / an</span>
+                        </div>
+                        <span class="text-[11px] text-emerald-600 font-semibold block mb-6">Soit seulement 25 € / mois</span>
+
+                        <ul class="space-y-3 text-xs text-slate-700 border-t border-slate-100 pt-6">
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-[#EA580C] shrink-0"></i>
+                                <span><strong>Analyses illimitées</strong> de CCTP et CCAP</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-[#EA580C] shrink-0"></i>
+                                <span>Extraction de bordereaux <strong>DPGF & BPU illimitée</strong></span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-[#EA580C] shrink-0"></i>
+                                <span>Simulateur de déboursé sec & calcul de marges</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-[#EA580C] shrink-0"></i>
+                                <span>Exports PDF exécutifs & classeurs Excel sans quota</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-[#EA580C] shrink-0"></i>
+                                <span>Historique complet et archivage de vos marchés</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-[#EA580C] shrink-0"></i>
+                                <span>Support prioritaire par email & téléphone</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button onclick="switchToDashboard()" class="w-full mt-8 btn-primary-orange text-xs text-center flex items-center justify-center gap-2">
+                        <span>Souscrire l'Abonnement Pro (300 €/an)</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <!-- Plan 3 : Entreprise / Multi-postes -->
+                <div class="saas-card p-8 flex flex-col justify-between">
+                    <div>
+                        <div class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">PME & Entreprise Générale</div>
+                        <h3 class="text-xl font-bold text-slate-900">Multi-Métreurs</h3>
+                        <p class="text-xs text-slate-500 mt-2 mb-6">Pour les bureaux d'études et PME avec plusieurs chargés d'affaires.</p>
+                        
+                        <div class="flex items-baseline gap-1 mb-6">
+                            <span class="text-4xl font-extrabold text-slate-900">Sur Devis</span>
+                        </div>
+
+                        <ul class="space-y-3 text-xs text-slate-600 border-t border-slate-100 pt-6">
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                                <span>Multi-comptes collaborateurs et métreurs</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                                <span>Gestion des droits et validation des chiffrages</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                                <span>Connecteur API logiciel de devis / ERP</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                                <span>Formation d'équipe personnalisée</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button onclick="alert('Contactez notre équipe commerciale au 01 89 00 00 00 ou par email à contact@btp-analyzer.fr');" class="w-full mt-8 btn-secondary-navy text-xs">
+                        Demander un Devis
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section FAQ -->
+        <section id="faq" class="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+            <h2 class="text-2xl font-bold text-[#1E3A8A] text-center mb-8">Questions Fréquemment Posées</h2>
+            <div class="space-y-4">
+                <div class="saas-card p-5">
+                    <h4 class="text-sm font-bold text-slate-900 mb-1">Est-ce adapté à mon corps d'état du bâtiment ?</h4>
+                    <p class="text-xs text-slate-600">Oui. Le moteur intègre la nomenclature AFNOR et CSTB pour tous les corps d'état : Électricité (CFO/CFA), Plâtrerie/Isolation, Plomberie/CVC, Gros Œuvre, Menuiserie, Peinture et Couverture.</p>
+                </div>
+                <div class="saas-card p-5">
+                    <h4 class="text-sm font-bold text-slate-900 mb-1">Puis-je tester avant de souscrire l'abonnement à 300 €/an ?</h4>
+                    <p class="text-xs text-slate-600">Absolument ! Vous avez accès gratuitement au tableau de bord avec les exemples réels pré-chargés (Groupe Scolaire et Médiathèque) pour constater l'efficacité en direct.</p>
+                </div>
+                <div class="saas-card p-5">
+                    <h4 class="text-sm font-bold text-slate-900 mb-1">Mes documents et prix unitaires restent-ils confidentiels ?</h4>
+                    <p class="text-xs text-slate-600">Totalement. Vos devis, DPGF et CCTP ne sont ni partagés, ni utilisés pour entraîner des modèles publics. Vos chiffrages restent strictement la propriété de votre entreprise.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Marketing Footer -->
+        <footer class="mt-auto border-t border-slate-200 bg-white py-8 text-xs text-slate-500">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 rounded bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-[10px]">BTP</div>
+                    <span class="font-bold text-slate-700">BTP Tender Analyzer © 2026</span>
+                    <span>• Conforme Code de la commande publique</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="#tarifs" class="hover:text-slate-700">Abonnement Annuel 300 € HT</a>
+                    <a href="#tarifs" class="hover:text-slate-700">Système de Crédits</a>
+                    <button onclick="switchToDashboard()" class="text-[#EA580C] font-semibold hover:underline">Accéder au Dashboard</button>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- PART B : DASHBOARD UTILISATEUR (APPLICATION SAAS B2B)                      -->
+    <!-- ========================================================================= -->
+    <div id="dashboard-view" class="hidden min-h-screen flex flex-col md:flex-row">
+        
+        <!-- Sidebar Navigation (Shadcn UI style) -->
+        <aside id="sidebar-container" class="w-full md:w-64 bg-white border-r border-slate-200 flex flex-col shrink-0">
+            <!-- Sidebar Header -->
+            <div class="h-16 px-5 border-b border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2.5 cursor-pointer" onclick="switchToLanding()">
+                    <div class="w-8 h-8 rounded-lg bg-[#1E3A8A] flex items-center justify-center text-white">
+                        <i data-lucide="hard-hat" class="w-4 h-4 text-amber-300"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-extrabold text-[#1E3A8A] tracking-tight">BTP ANALYZER</div>
+                        <div class="text-[9px] uppercase font-bold text-[#EA580C]">Espace Artisan Pro</div>
+                    </div>
+                </div>
+                <button onclick="switchToLanding()" title="Retour au site vitrine" class="p-1 rounded text-slate-400 hover:text-slate-600 hover:bg-slate-100">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+
+            <!-- Workspace Profile Chip -->
+            <div class="p-4 border-b border-slate-100 bg-slate-50/60">
+                <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Votre Organisation</div>
+                <div class="text-xs font-bold text-slate-900 truncate">SAS Artisan BTP Travaux</div>
+                <div class="mt-1.5 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span class="text-[11px] font-semibold text-emerald-700">Abonnement Pro Actif</span>
+                </div>
+            </div>
+
+            <!-- Sidebar Menu Links -->
+            <nav class="p-3 space-y-1 grow">
+                <button onclick="switchSidebarTab('nouvelle-analyse')" id="nav-btn-nouvelle-analyse" class="sidebar-link active w-full">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span>Nouvelle Analyse</span>
+                </button>
+                <button onclick="switchSidebarTab('historique')" id="nav-btn-historique" class="sidebar-link w-full">
+                    <i data-lucide="folder-clock" class="w-4 h-4"></i>
+                    <span>Historique des Dossiers</span>
+                    <span id="history-badge" class="ml-auto text-[10px] font-bold px-1.5 py-0.2 rounded bg-slate-100 text-slate-600">2</span>
+                </button>
+                <button onclick="switchSidebarTab('simulateur')" id="nav-btn-simulateur" class="sidebar-link w-full">
+                    <i data-lucide="calculator" class="w-4 h-4"></i>
+                    <span>Grille DPGF & Marges</span>
+                </button>
+                <button onclick="switchSidebarTab('checklist')" id="nav-btn-checklist" class="sidebar-link w-full">
+                    <i data-lucide="list-checks" class="w-4 h-4"></i>
+                    <span>Checklist Dépôt d'Offre</span>
+                </button>
+                <button onclick="switchSidebarTab('compte')" id="nav-btn-compte" class="sidebar-link w-full">
+                    <i data-lucide="user-check" class="w-4 h-4"></i>
+                    <span>Mon Compte & Crédits</span>
+                </button>
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="p-4 border-t border-slate-200 bg-slate-50/50 space-y-3">
+                <div class="p-3 rounded-lg bg-orange-50 border border-orange-200">
+                    <div class="flex items-center gap-1.5 text-xs font-bold text-[#EA580C]">
+                        <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                        <span>Abonnement 300 € / an</span>
+                    </div>
+                    <p class="text-[11px] text-slate-600 mt-1">Analyses illimitées actives jusqu'au 28/10/2027.</p>
+                </div>
+
+                <div class="flex items-center justify-between text-xs text-slate-500 pt-1">
+                    <button onclick="switchToLanding()" class="hover:text-[#1E3A8A] flex items-center gap-1 font-medium">
+                        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                        <span>Site vitrine</span>
+                    </button>
+                    <button id="btn-open-api-modal" title="Clé Gemini optionnelle" class="hover:text-slate-800 flex items-center gap-1">
+                        <i data-lucide="key" class="w-3 h-3 text-amber-600"></i>
+                        <span>API</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace (Right) -->
+        <main class="grow flex flex-col min-w-0 bg-[#F9FAFB] overflow-y-auto">
+            <!-- Top Dashboard Bar -->
+            <header class="h-16 px-6 bg-white border-b border-slate-200 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-3">
+                    <h2 id="workspace-title" class="text-sm font-bold text-slate-900">Nouvelle Analyse de Marché</h2>
+                    <span class="text-xs text-slate-400">|</span>
+                    <span id="engine-status-badge" class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 inline-flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        Moteur Expert BTP Actif (CSTB/AFNOR)
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button onclick="switchToLanding()" class="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center gap-1.5">
+                        <i data-lucide="globe" class="w-3.5 h-3.5 text-slate-500"></i>
+                        <span>Présentation & Tarifs</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content Area -->
+            <div class="p-6 sm:p-8 max-w-6xl w-full mx-auto space-y-8">
+                
+                <!-- SUB-VIEW 1 : NOUVELLE ANALYSE -->
+                <div id="subview-nouvelle-analyse" class="space-y-8">
+                    
+                    <!-- Pre-loaded Samples Quick Bar -->
+                    <div class="saas-card p-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-white">
+                        <div>
+                            <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                                <i data-lucide="sparkles" class="w-4 h-4 text-[#EA580C]"></i>
+                                <span>Dossiers d'exemples prêts à l'emploi (1 clic)</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-0.5">Testez immédiatement le moteur avec un dossier réel du secteur public :</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button id="btn-sample-1" class="px-3 py-1.5 rounded-lg bg-orange-50 hover:bg-orange-100 border border-orange-200 text-[#EA580C] text-xs font-bold transition-colors flex items-center gap-1.5">
+                                <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                                <span>Lot 02 Électricité (École Pasteur)</span>
+                            </button>
+                            <button id="btn-sample-2" class="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-bold transition-colors flex items-center gap-1.5">
+                                <i data-lucide="layers" class="w-3.5 h-3.5 text-slate-500"></i>
+                                <span>Lot 04 Plâtrerie (Médiathèque)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Clean White Dropzone Section -->
+                    <section id="upload-section" class="saas-card p-6 bg-white space-y-6">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900">1. Dépôt des Pièces de Consultation (DCE)</h3>
+                            <p class="text-xs text-slate-500 mt-1">Glissez vos fichiers ou cliquez dans les cartes ci-dessous pour importer vos documents techniques et financiers.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <!-- Dropzone Card 1: CCTP (PDF) -->
+                            <div id="cctp-dropzone" class="saas-dropzone p-6 text-center cursor-pointer relative group">
+                                <input type="file" id="cctp-file-input" accept=".pdf,.txt" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                
+                                <div id="cctp-file-label" class="space-y-2.5">
+                                    <div class="w-12 h-12 rounded-xl bg-blue-50 border border-blue-200 text-[#1E3A8A] mx-auto flex items-center justify-center group-hover:scale-105 transition-transform">
+                                        <i data-lucide="file-text" class="w-6 h-6"></i>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-slate-900">CCTP ou CCAP (Obligatoire)</h4>
+                                    <p class="text-xs text-slate-500">Cahier des clauses techniques au format PDF ou TXT</p>
+                                    <span class="inline-block text-[11px] font-bold text-[#1E3A8A] bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200">
+                                        Sélectionner le PDF
+                                    </span>
+                                </div>
+
+                                <!-- File selected preview -->
+                                <div id="cctp-file-preview" class="hidden flex items-center justify-between p-3.5 rounded-lg bg-slate-50 border border-slate-200 text-left">
+                                    <div class="flex items-center gap-3 overflow-hidden">
+                                        <i data-lucide="file-check-2" class="w-6 h-6 text-emerald-600 shrink-0"></i>
+                                        <div class="truncate">
+                                            <div id="cctp-file-name" class="text-xs font-bold text-slate-900 truncate">document.pdf</div>
+                                            <div id="cctp-file-size" class="text-[11px] text-slate-500">1.2 Mo</div>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="removeCctpFile(event)" class="p-1 rounded-md hover:bg-slate-200 text-slate-400 hover:text-rose-600">
+                                        <i data-lucide="x" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Dropzone Card 2: DPGF (Excel / CSV) -->
+                            <div id="dpgf-dropzone" class="saas-dropzone p-6 text-center cursor-pointer relative group">
+                                <input type="file" id="dpgf-file-input" accept=".xlsx,.xls,.csv" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                
+                                <div id="dpgf-file-label" class="space-y-2.5">
+                                    <div class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 mx-auto flex items-center justify-center group-hover:scale-105 transition-transform">
+                                        <i data-lucide="table-2" class="w-6 h-6"></i>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-slate-900">Bordereau DPGF / BPU (Optionnel)</h4>
+                                    <p class="text-xs text-slate-500">Grille tarifaire au format Excel (.xlsx, .xls) ou CSV</p>
+                                    <span class="inline-block text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+                                        Sélectionner l'Excel
+                                    </span>
+                                </div>
+
+                                <!-- File selected preview -->
+                                <div id="dpgf-file-preview" class="hidden flex items-center justify-between p-3.5 rounded-lg bg-slate-50 border border-slate-200 text-left">
+                                    <div class="flex items-center gap-3 overflow-hidden">
+                                        <i data-lucide="file-spreadsheet" class="w-6 h-6 text-emerald-600 shrink-0"></i>
+                                        <div class="truncate">
+                                            <div id="dpgf-file-name" class="text-xs font-bold text-slate-900 truncate">dpgf.xlsx</div>
+                                            <div id="dpgf-file-size" class="text-[11px] text-slate-500">450 Ko</div>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="removeDpgfFile(event)" class="p-1 rounded-md hover:bg-slate-200 text-slate-400 hover:text-rose-600">
+                                        <i data-lucide="x" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100">
+                            <span class="text-xs text-slate-500">Temps moyen d'analyse : ~60 secondes</span>
+                            <button id="btn-launch-analysis" disabled class="btn-primary-orange w-full sm:w-auto flex items-center justify-center gap-2 text-sm opacity-50 cursor-not-allowed">
+                                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                <span>Lancer l'Analyse Express (60s)</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- Clean Light Progress Stepper -->
+                    <section id="progress-stepper" class="hidden saas-card p-6 bg-white space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-[#EA580C] flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-[#EA580C] animate-ping"></span>
+                                Audit du dossier en cours par le moteur BTP...
+                            </h4>
+                            <span class="text-xs font-semibold text-slate-500">Étape active</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                            <div id="step-1" class="p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-center gap-2.5 text-xs text-slate-500">
+                                <span class="step-icon shrink-0"><span class="w-2.5 h-2.5 rounded-full bg-slate-300 inline-block"></span></span>
+                                <span>1. Extraction PDF</span>
+                            </div>
+                            <div id="step-2" class="p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-center gap-2.5 text-xs text-slate-500">
+                                <span class="step-icon shrink-0"><span class="w-2.5 h-2.5 rounded-full bg-slate-300 inline-block"></span></span>
+                                <span>2. Scan Normes DTU</span>
+                            </div>
+                            <div id="step-3" class="p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-center gap-2.5 text-xs text-slate-500">
+                                <span class="step-icon shrink-0"><span class="w-2.5 h-2.5 rounded-full bg-slate-300 inline-block"></span></span>
+                                <span>3. Pièges CCAP</span>
+                            </div>
+                            <div id="step-4" class="p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-center gap-2.5 text-xs text-slate-500">
+                                <span class="step-icon shrink-0"><span class="w-2.5 h-2.5 rounded-full bg-slate-300 inline-block"></span></span>
+                                <span>4. Grille DPGF</span>
+                            </div>
+                            <div id="step-5" class="p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-center gap-2.5 text-xs text-slate-500">
+                                <span class="step-icon shrink-0"><span class="w-2.5 h-2.5 rounded-full bg-slate-300 inline-block"></span></span>
+                                <span>5. Fiche Go/No-Go</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Results Section (Initially Hidden) -->
+                    <section id="results-section" class="hidden space-y-6">
+
+                        <!-- Clean Light Navigation Tabs & Export Toolbar -->
+                        <div id="nav-tabs" class="saas-card p-2 bg-white flex flex-col md:flex-row items-center justify-between gap-3">
+                            <!-- Fluid Tabs -->
+                            <div class="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
+                                <button data-tab="synthese" class="nav-tab-btn px-3.5 py-2 rounded-lg text-xs font-bold bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center gap-2 transition-all">
+                                    <i data-lucide="gauge" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
+                                    <span>Synthèse 60s (Décision)</span>
+                                </button>
+                                <button data-tab="normes" class="nav-tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 flex items-center gap-2 transition-all">
+                                    <i data-lucide="check-circle" class="w-3.5 h-3.5 text-slate-400"></i>
+                                    <span>Normes DTU & Qualifs</span>
+                                </button>
+                                <button data-tab="risques" class="nav-tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 flex items-center gap-2 transition-all">
+                                    <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-slate-400"></i>
+                                    <span>Clauses CCAP & Pénalités</span>
+                                </button>
+                                <button data-tab="dpgf" class="nav-tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 flex items-center gap-2 transition-all">
+                                    <i data-lucide="calculator" class="w-3.5 h-3.5 text-slate-400"></i>
+                                    <span>Grille DPGF & Marges</span>
+                                </button>
+                                <button data-tab="checklist" class="nav-tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 flex items-center gap-2 transition-all">
+                                    <i data-lucide="list-checks" class="w-3.5 h-3.5 text-slate-400"></i>
+                                    <span>Checklist Dépôt</span>
+                                </button>
+                            </div>
+
+                            <!-- Clean Export Toolbar -->
+                            <div class="flex items-center gap-2 shrink-0 w-full md:w-auto justify-end">
+                                <button id="btn-export-pdf" class="px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-rose-700 border border-red-200 text-xs font-bold flex items-center gap-1.5 transition-colors" title="Télécharger la fiche executive en PDF">
+                                    <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
+                                    <span>Fiche PDF</span>
+                                </button>
+                                <button id="btn-export-excel" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold flex items-center gap-1.5 transition-colors" title="Télécharger le classeur Excel">
+                                    <i data-lucide="sheet" class="w-3.5 h-3.5"></i>
+                                    <span>Excel Chiffrage</span>
+                                </button>
+                                <button id="btn-export-csv" class="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-bold flex items-center gap-1.5 transition-colors" title="Export CSV pour logiciel de devis">
+                                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                    <span>CSV</span>
+                                </button>
+                                <button id="btn-print-summary" class="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-bold flex items-center gap-1.5 transition-colors">
+                                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                                    <span>Imprimer</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- TAB 1: SYNTHÈSE 60S (DÉCISION HERO) -->
+                        <div id="tab-content-synthese" class="tab-pane space-y-6">
+                            <!-- Hero Verdict Card (Pristine White) -->
+                            <div class="saas-card p-6 bg-white space-y-6">
+                                <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 border-b border-slate-100">
+                                    <div class="space-y-2">
+                                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Verdict d'opportunité express artisan (60 secondes)</span>
+                                        <div class="flex flex-wrap items-center gap-3">
+                                            <div id="verdict-badge" class="px-4 py-2 rounded-lg font-extrabold text-sm uppercase tracking-wider inline-flex items-center gap-2 border">
+                                                VERDICT EN COURS
+                                            </div>
+                                            <span class="text-xs text-slate-400 font-mono" id="meta-id">Réf: BTP-000</span>
+                                        </div>
+                                        <p id="executive-summary-text" class="text-xs sm:text-sm text-slate-700 max-w-3xl leading-relaxed pt-1">
+                                            Chargement de la synthèse opérationnelle...
+                                        </p>
+                                    </div>
+
+                                    <!-- Overall Score Gauge -->
+                                    <div class="flex flex-col items-center justify-center p-4 rounded-xl bg-slate-50 border border-slate-200 w-full lg:w-48 shrink-0 text-center">
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Score Faisabilité</span>
+                                        <div id="score-value" class="text-3xl font-black text-[#1E3A8A] font-mono my-1">--/100</div>
+                                        <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-1">
+                                            <div id="score-progress-bar" class="h-full bg-[#EA580C] rounded-full" style="width: 0%"></div>
+                                        </div>
+                                        <span id="meta-engine" class="text-[9px] text-slate-500 mt-2 truncate max-w-full">Moteur Expert BTP</span>
+                                    </div>
+                                </div>
+
+                                <!-- 4 Dimension Gauges -->
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+                                        <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                                            <span>Planning & Délais</span>
+                                            <span id="dim-delay-val" class="font-mono text-[#1E3A8A] font-bold">--%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                                            <div id="dim-delay-bar" class="h-full bg-[#1E3A8A] rounded-full" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+                                        <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                                            <span>Sécurité Financière</span>
+                                            <span id="dim-finance-val" class="font-mono text-[#1E3A8A] font-bold">--%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                                            <div id="dim-finance-bar" class="h-full bg-[#1E3A8A] rounded-full" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+                                        <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                                            <span>Normes & DTU</span>
+                                            <span id="dim-norms-val" class="font-mono text-[#1E3A8A] font-bold">--%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                                            <div id="dim-norms-bar" class="h-full bg-[#1E3A8A] rounded-full" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+                                        <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                                            <span>Simplicité Admin</span>
+                                            <span id="dim-admin-val" class="font-mono text-[#1E3A8A] font-bold">--%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                                            <div id="dim-admin-bar" class="h-full bg-[#1E3A8A] rounded-full" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Key Project Facts Grid -->
+                            <div class="saas-card p-6 bg-white space-y-4">
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                                    <i data-lucide="building" class="w-4 h-4 text-[#1E3A8A]"></i>
+                                    Données Générales & Délais d'Exécution
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                                    <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                                        <span class="text-[10px] uppercase font-bold text-slate-500 block mb-0.5">Objet du Marché :</span>
+                                        <p id="ov-title" class="font-bold text-slate-900">--</p>
+                                    </div>
+                                    <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                                        <span class="text-[10px] uppercase font-bold text-slate-500 block mb-0.5">Acheteur Public (MOA) :</span>
+                                        <p id="ov-client" class="font-semibold text-slate-800">--</p>
+                                    </div>
+                                    <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                                        <span class="text-[10px] uppercase font-bold text-slate-500 block mb-0.5">Lieu du Chantier :</span>
+                                        <p id="ov-location" class="font-semibold text-slate-800">--</p>
+                                    </div>
+                                    <div class="p-3 rounded-lg bg-blue-50/70 border border-blue-200">
+                                        <span class="text-[10px] uppercase font-bold text-[#1E3A8A] block mb-0.5">Date Limite de Remise (DLRO) :</span>
+                                        <p id="ov-deadline" class="font-bold text-[#EA580C] text-sm">--</p>
+                                    </div>
+                                    <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                                        <span class="text-[10px] uppercase font-bold text-slate-500 block mb-0.5">Délai d'Exécution :</span>
+                                        <p id="ov-duration" class="font-semibold text-slate-800">--</p>
+                                    </div>
+                                    <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                                        <span class="text-[10px] uppercase font-bold text-slate-500 block mb-0.5">Lots Concernés :</span>
+                                        <p id="ov-lots" class="font-semibold text-slate-800">--</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3 Columns of Insights: Red flags, Warnings, Green lights -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                <!-- Red Flags -->
+                                <div class="saas-card p-5 bg-white border-l-4 border-l-rose-600">
+                                    <div class="flex items-center gap-2 mb-3 text-rose-700">
+                                        <i data-lucide="alert-octagon" class="w-4 h-4"></i>
+                                        <h4 class="text-xs font-bold uppercase tracking-wider">Points Bloquants (Red Flags)</h4>
+                                    </div>
+                                    <ul id="list-red-flags" class="space-y-2.5"></ul>
+                                </div>
+
+                                <!-- Amber Warnings -->
+                                <div class="saas-card p-5 bg-white border-l-4 border-l-amber-500">
+                                    <div class="flex items-center gap-2 mb-3 text-amber-700">
+                                        <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                                        <h4 class="text-xs font-bold uppercase tracking-wider">Points de Vigilance (Risques)</h4>
+                                    </div>
+                                    <ul id="list-warnings" class="space-y-2.5"></ul>
+                                </div>
+
+                                <!-- Green Lights -->
+                                <div class="saas-card p-5 bg-white border-l-4 border-l-emerald-600">
+                                    <div class="flex items-center gap-2 mb-3 text-emerald-700">
+                                        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                                        <h4 class="text-xs font-bold uppercase tracking-wider">Atouts & Conditions Favorables</h4>
+                                    </div>
+                                    <ul id="list-green-lights" class="space-y-2.5"></ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 2: NORMES DTU & QUALIFICATIONS -->
+                        <div id="tab-content-normes" class="tab-pane hidden space-y-6">
+                            <!-- Certifications -->
+                            <div class="saas-card p-6 bg-white space-y-3">
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                                    <i data-lucide="shield-check" class="w-4 h-4 text-[#1E3A8A]"></i>
+                                    Qualifications Professionnelles & Attestations Exigées
+                                </h3>
+                                <div id="certifs-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-1"></div>
+                            </div>
+
+                            <!-- DTU Table -->
+                            <div class="saas-card p-6 bg-white space-y-4">
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                                    <i data-lucide="book-open" class="w-4 h-4 text-[#1E3A8A]"></i>
+                                    Prescriptions Techniques & Normes DTU Applicables (CSTB / AFNOR)
+                                </h3>
+                                <div class="overflow-x-auto rounded-lg border border-slate-200">
+                                    <table class="w-full text-left text-xs">
+                                        <thead class="bg-slate-50 text-slate-700 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
+                                            <tr>
+                                                <th class="p-3">Code / DTU</th>
+                                                <th class="p-3">Intitulé Officiel</th>
+                                                <th class="p-3">Corps d'état</th>
+                                                <th class="p-3">Niveau</th>
+                                                <th class="p-3">Exigence relevée dans le CCTP</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="norms-table-body" class="divide-y divide-slate-100 bg-white"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 3: CLAUSES CCAP & RISQUES FINANCIERS -->
+                        <div id="tab-content-risques" class="tab-pane hidden space-y-6">
+                            <div class="saas-card p-6 bg-white space-y-4">
+                                <div>
+                                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                                        <i data-lucide="scale" class="w-4 h-4 text-[#1E3A8A]"></i>
+                                        Cartographie des Clauses Contractuelles & Pièges Financiers
+                                    </h3>
+                                    <p class="text-xs text-slate-500 mt-1">Analyse des pénalités journalières, retenue de garantie (5%), compte prorata et conditions de révision des prix.</p>
+                                </div>
+                                <div id="financial-risks-container" class="space-y-4 pt-2"></div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 4: GRILLE DPGF & SIMULATEUR DE MARGES -->
+                        <div id="tab-content-dpgf" class="tab-pane hidden space-y-6">
+                            <!-- Simulator Bar -->
+                            <div class="saas-card p-6 bg-white space-y-4 border-2 border-slate-200">
+                                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="calculator" class="w-4 h-4 text-[#EA580C]"></i>
+                                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900">Simulateur de Prix de Vente & Marge BTP</h3>
+                                    </div>
+                                    <span id="dpgf-item-count" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 font-mono font-bold">0 poste</span>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+                                        <label class="block text-xs font-bold text-slate-700 mb-1">Coefficient Frais Généraux (%) :</label>
+                                        <input type="number" id="calc-fg" value="12" step="0.5" min="0" max="40" class="w-full bg-white border border-slate-300 rounded-md px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#EA580C] focus:outline-none">
+                                        <span class="text-[10px] text-slate-500 mt-1 block">Assurances, bureau, véhicules, outillage</span>
+                                    </div>
+                                    <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+                                        <label class="block text-xs font-bold text-slate-700 mb-1">Marge Nette Ciblée (%) :</label>
+                                        <input type="number" id="calc-marge" value="15" step="0.5" min="0" max="50" class="w-full bg-white border border-slate-300 rounded-md px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#EA580C] focus:outline-none">
+                                        <span class="text-[10px] text-slate-500 mt-1 block">Bénéfice net artisan après impôts</span>
+                                    </div>
+                                    <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+                                        <label class="block text-xs font-bold text-slate-700 mb-1">Taux de TVA :</label>
+                                        <select id="calc-tva" class="w-full bg-white border border-slate-300 rounded-md px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#EA580C] focus:outline-none">
+                                            <option value="20">20.0% (Neuf & Rénovation standard)</option>
+                                            <option value="10">10.0% (Amélioration logement > 2 ans)</option>
+                                            <option value="5.5">5.5% (Rénovation énergétique)</option>
+                                        </select>
+                                        <span class="text-[10px] text-slate-500 mt-1 block">Selon nature des travaux</span>
+                                    </div>
+                                </div>
+
+                                <!-- Live KPI Badges -->
+                                <div class="grid grid-cols-2 md:grid-cols-5 gap-3 pt-2">
+                                    <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                                        <span class="text-[10px] font-bold text-slate-500 uppercase block">1. Déboursé Sec</span>
+                                        <div id="sim-debourse" class="text-sm font-bold font-mono text-slate-900 mt-1">0,00 €</div>
+                                        <span class="text-[9px] text-slate-500">Fournitures + MO</span>
+                                    </div>
+                                    <div class="p-3 rounded-lg bg-orange-50 border border-orange-200">
+                                        <span class="text-[10px] font-bold text-[#EA580C] uppercase block">2. Marge Nette (€)</span>
+                                        <div id="sim-marge-montant" class="text-sm font-bold font-mono text-[#EA580C] mt-1">0,00 €</div>
+                                        <span class="text-[9px] text-orange-700">Bénéfice estimé</span>
+                                    </div>
+                                    <div class="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                                        <span class="text-[10px] font-bold text-[#1E3A8A] uppercase block">3. Prix Vente HT</span>
+                                        <div id="sim-vente-ht" class="text-sm font-bold font-mono text-[#1E3A8A] mt-1">0,00 €</div>
+                                        <span class="text-[9px] text-blue-700">Soumission HT</span>
+                                    </div>
+                                    <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                                        <span class="text-[10px] font-bold text-slate-500 uppercase block">4. Montant TVA</span>
+                                        <div id="sim-tva" class="text-sm font-bold font-mono text-slate-700 mt-1">0,00 €</div>
+                                        <span class="text-[9px] text-slate-500">TVA collectée</span>
+                                    </div>
+                                    <div class="p-3 rounded-lg bg-emerald-50 border border-emerald-300">
+                                        <span class="text-[10px] font-bold text-emerald-800 uppercase block">5. TOTAL TTC</span>
+                                        <div id="sim-total-ttc" class="text-sm font-black font-mono text-emerald-800 mt-1">0,00 €</div>
+                                        <span class="text-[9px] text-emerald-700">Prix client final</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- DPGF Table Container -->
+                            <div class="saas-card p-6 bg-white space-y-4">
+                                <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
+                                        <i data-lucide="list" class="w-4 h-4 text-[#EA580C]"></i>
+                                        Bordereau des Postes Extraits de la DPGF
+                                    </h4>
+                                    <div class="w-full sm:w-64">
+                                        <input type="text" id="dpgf-search-input" placeholder="Filtrer un poste (ex: LED, câble)..." class="w-full px-3 py-1.5 rounded-md bg-white border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:border-[#EA580C] focus:outline-none">
+                                    </div>
+                                </div>
+
+                                <div class="overflow-x-auto rounded-lg border border-slate-200 max-h-[500px] overflow-y-auto">
+                                    <table class="w-full text-left text-xs">
+                                        <thead class="bg-slate-50 text-slate-700 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200 sticky top-0 z-10">
+                                            <tr>
+                                                <th class="p-3 text-center w-14">N°</th>
+                                                <th class="p-3">Désignation des Prestations</th>
+                                                <th class="p-3 text-center w-16">Unité</th>
+                                                <th class="p-3 text-right w-24">Quantité</th>
+                                                <th class="p-3 text-right w-32">P.U. H.T. (€)</th>
+                                                <th class="p-3 text-right w-36">Total H.T. (€)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="dpgf-table-body" class="divide-y divide-slate-100 bg-white"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 5: CHECKLIST DÉPÔT D'OFFRE -->
+                        <div id="tab-content-checklist" class="tab-pane hidden space-y-6">
+                            <div class="saas-card p-6 bg-white space-y-5">
+                                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                                    <div>
+                                        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                            <i data-lucide="check-square" class="w-4 h-4 text-emerald-600"></i>
+                                            Dossier de Candidature : Pièces Justificatives Obligatoires
+                                        </h3>
+                                        <p class="text-xs text-slate-500 mt-0.5">Vérifiez que toutes les pièces sont prêtes avant de déposer sur le profil d'acheteur (AWS, Maximilien, etc.).</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <span id="checklist-count" class="text-xs font-mono font-bold text-[#EA580C]">0/8 pièces prêtes</span>
+                                        <div class="w-32 bg-slate-200 h-2 rounded-full overflow-hidden mt-1">
+                                            <div id="checklist-bar" class="h-full bg-emerald-600 rounded-full" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="checklist-items" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- SUB-VIEW 2 : HISTORIQUE DES DOSSIERS -->
+                <div id="subview-historique" class="hidden space-y-6">
+                    <div class="saas-card p-6 bg-white space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-base font-bold text-slate-900">Historique de vos Marchés Analysés</h3>
+                                <p class="text-xs text-slate-500 mt-0.5">Retrouvez toutes vos analyses, scores de risque et fiches de chiffrage passées.</p>
+                            </div>
+                            <button onclick="switchSidebarTab('nouvelle-analyse')" class="btn-primary-orange text-xs flex items-center gap-1.5">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                <span>Nouvelle Analyse</span>
+                            </button>
+                        </div>
+
+                        <div class="overflow-x-auto rounded-lg border border-slate-200">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-700 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-3">Référence</th>
+                                        <th class="p-3">Date</th>
+                                        <th class="p-3">Intitulé du Marché</th>
+                                        <th class="p-3">Acheteur (MOA)</th>
+                                        <th class="p-3 text-center">Score & Verdict</th>
+                                        <th class="p-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-table-body" class="divide-y divide-slate-100 bg-white">
+                                    <!-- Populated dynamically via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-VIEW 3 : SIMULATEUR DIRECT -->
+                <div id="subview-simulateur" class="hidden space-y-6">
+                    <div class="saas-card p-6 bg-white space-y-4">
+                        <h3 class="text-base font-bold text-slate-900">Outil de Simulation de Rentabilité BTP</h3>
+                        <p class="text-xs text-slate-500">Pour utiliser le simulateur sur une DPGF complète, chargez un dossier depuis l'onglet Nouvelle Analyse.</p>
+                        <div class="pt-2">
+                            <button onclick="switchToDashboardAndLoadSample('1')" class="btn-primary-orange text-xs flex items-center gap-2">
+                                <i data-lucide="calculator" class="w-4 h-4"></i>
+                                <span>Charger un exemple de DPGF et simuler</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-VIEW 4 : MON COMPTE & CRÉDITS -->
+                <div id="subview-compte" class="hidden space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Card 1 : Abonnement -->
+                        <div class="saas-card p-6 bg-white space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold uppercase tracking-wider text-[#EA580C]">Abonnement Actif</span>
+                                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">En règle</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900">Abonnement Annuel Pro Artisans</h3>
+                            <div class="text-2xl font-black text-[#1E3A8A]">300,00 € HT <span class="text-xs font-normal text-slate-500">/ an</span></div>
+                            <p class="text-xs text-slate-600">Renouvellement automatique le 28/10/2027. Vous bénéficiez d'analyses et exports illimités sans restriction.</p>
+                            
+                            <div class="pt-3 border-t border-slate-100 space-y-2 text-xs">
+                                <div class="flex justify-between text-slate-600">
+                                    <span>Quota d'analyses CCTP :</span>
+                                    <span class="font-bold text-emerald-700">Illimité</span>
+                                </div>
+                                <div class="flex justify-between text-slate-600">
+                                    <span>Support prioritaire BTP :</span>
+                                    <span class="font-bold text-slate-800">Inclus (24/7)</span>
+                                </div>
+                                <div class="flex justify-between text-slate-600">
+                                    <span>Mises à jour DTU CSTB :</span>
+                                    <span class="font-bold text-slate-800">Automatiques</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 : Entreprise -->
+                        <div class="saas-card p-6 bg-white space-y-4">
+                            <div class="text-xs font-bold uppercase tracking-wider text-slate-500">Profil Entreprise BTP</div>
+                            <h3 class="text-base font-bold text-slate-900">SAS Artisan BTP Travaux</h3>
+                            
+                            <div class="space-y-2 text-xs text-slate-600">
+                                <div><span class="font-bold text-slate-700">SIRET :</span> 849 123 456 00012</div>
+                                <div><span class="font-bold text-slate-700">Activité :</span> Travaux d'installation électrique & second œuvre</div>
+                                <div><span class="font-bold text-slate-700">Assurance Décennale :</span> SMABTP Pol. n° 987654321 (Valide)</div>
+                                <div><span class="font-bold text-slate-700">Qualifications :</span> Qualifelec RGE E2-C2, Qualibat 4112</div>
+                            </div>
+
+                            <div class="pt-3 border-t border-slate-100">
+                                <span class="text-[11px] text-slate-400">Pour modifier vos coordonnées de facturation, contactez le support.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal : Configuration API Gemini Optionnelle -->
+    <div id="api-key-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+        <div class="saas-card max-w-md w-full p-6 space-y-4 bg-white shadow-2xl">
             <div class="flex items-center justify-between">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                    <i data-lucide="key" class="w-4 h-4 text-amber-400"></i>
-                    Configuration de la Clé API Gemini
+                <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                    <i data-lucide="key" class="w-4 h-4 text-[#EA580C]"></i>
+                    Clé API Google Gemini (Optionnelle)
                 </h3>
-                <button id="btn-close-api-modal" class="text-slate-400 hover:text-white">
+                <button id="btn-close-api-modal" class="text-slate-400 hover:text-slate-600">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
-            <p class="text-xs text-slate-400 leading-relaxed">
-                L'analyseur fonctionne de manière 100% autonome et sans frais avec son moteur expert BTP intégré. Pour activer l'analyse avancée multimodale avec Google Gemini 2.5 Flash, renseignez votre clé API :
+            <p class="text-xs text-slate-600 leading-relaxed">
+                Le logiciel fonctionne de manière 100% autonome et sans frais grâce au moteur expert BTP intégré. Vous pouvez également connecter votre propre clé Google Gemini pour une analyse multimodale complémentaire :
             </p>
             <div>
-                <label class="block text-xs font-bold text-slate-300 mb-1">Clé API Google Gemini :</label>
-                <input type="password" id="api-key-input" placeholder="AIzaSy..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:border-amber-400 focus:outline-none">
+                <label class="block text-xs font-bold text-slate-700 mb-1">Clé API Google Gemini :</label>
+                <input type="password" id="api-key-input" placeholder="AIzaSy..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 font-mono focus:border-[#EA580C] focus:outline-none">
             </div>
             <div class="flex justify-end gap-2 pt-2">
-                <button id="btn-save-api-key" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors">
+                <button id="btn-save-api-key" class="btn-primary-orange text-xs">
                     Enregistrer la Clé
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-800 bg-slate-950 py-6 text-center text-xs text-slate-500">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <p>© 2026 BTP Public Tender Analyzer • Conforme Code de la commande publique & Normes CSTB / AFNOR</p>
-            <p class="font-mono text-[11px] text-slate-400">FastAPI & Python 3.13 • Zero External Paid Dependencies</p>
-        </div>
-    </footer>
-
-    <!-- App JavaScript -->
+    <!-- Client Application Logic -->
     <script src="/static/js/app.js"></script>
 </body>
 </html>

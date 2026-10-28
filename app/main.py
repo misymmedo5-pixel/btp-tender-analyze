@@ -58,12 +58,26 @@ app.include_router(api_router)
 
 @app.get("/", response_class=HTMLResponse)
 async def root_view(request: Request):
-    """Renders the main single-page dashboard."""
+    """Renders the main application with landing page."""
     return templates.TemplateResponse(
         request=request,
         name="index.html",
         context={
             "app_name": APP_NAME,
             "app_version": APP_VERSION,
+            "initial_view": "landing",
+        },
+    )
+
+@app.get("/app", response_class=HTMLResponse)
+async def dashboard_view(request: Request):
+    """Renders directly the artisan dashboard workspace."""
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={
+            "app_name": APP_NAME,
+            "app_version": APP_VERSION,
+            "initial_view": "dashboard",
         },
     )
