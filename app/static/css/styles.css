@@ -1,0 +1,86 @@
+/* BTP Public Tender Analyzer - Custom Styles & Print Styles */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #0b1120;
+    color: #0f172a;
+}
+
+code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Drag & Drop Pulse */
+.dropzone-active {
+    border-color: #d97706 !important;
+    background-color: #fffbeb !important;
+    transform: scale(1.005);
+}
+
+/* Animations */
+@keyframes pulseSubtle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+.pulse-subtle {
+    animation: pulseSubtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Print Stylesheet for 1-Page Summary Printing */
+@media print {
+    body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-size: 11pt !important;
+    }
+
+    /* Hide non-printable elements */
+    header,
+    footer,
+    #upload-section,
+    #sample-buttons,
+    #nav-tabs,
+    .no-print,
+    button:not(.allow-print),
+    #apiKeyModal {
+        display: none !important;
+    }
+
+    #results-section {
+        display: block !important;
+    }
+
+    .tab-pane {
+        display: block !important;
+        page-break-after: always;
+    }
+
+    .shadow-sm, .shadow, .shadow-md, .shadow-lg, .shadow-xl {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+    }
+
+    /* Ensure high contrast for ink */
+    .bg-slate-900, .bg-slate-800 {
+        background-color: #f8fafc !important;
+        color: #0f172a !important;
+    }
+}
