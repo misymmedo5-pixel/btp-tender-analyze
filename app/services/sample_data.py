@@ -128,6 +128,58 @@ SAMPLE_2_DPGF_ITEMS = [
     DPGFItem(item_number="4.01", designation="Jointoiement soigné 3 passes, ponçage fin et récolement des surfaces pour finition Q3", unit="m²", quantity=970.0, unit_price=6.5, total_price=6305.0, lot="Lot 04 - Plâtrerie"),
 ]
 
+SAMPLE_3_CCTP_TEXT = """
+RÉPUBLIQUE FRANÇAISE - VILLE DE NANTERRE
+DIRECTION DU PATRIMOINE BÂTI ET DE LA TRANSITION ÉNERGÉTIQUE
+
+MARCHÉ PUBLIC DE TRAVAUX - PROCÉDURE ADAPTÉE (MAPA)
+CAHIER DES CLAUSES TECHNIQUES PARTICULIÈRES (CCTP) & CCAP
+
+OBJET DU MARCHÉ :
+Rénovation des installations de plomberie sanitaire, production ECS et ventilation de la Crèche Municipale
+Chantier : 28, Rue des Écoles - 92000 Nanterre
+
+MAÎTRE D'OUVRAGE :
+Ville de Nanterre (Hôtel de Ville)
+
+LOT CONCERNÉ :
+Lot n° 03 – Plomberie Sanitaire / Production Eau Chaude Solaire & Thermodynamique / VMC Double Flux
+
+1. CALENDRIER ET DÉLAIS D'EXÉCUTION :
+- Date limite de remise des offres : 02/12/2026 à 12h00 sur la plateforme Maximilien.
+- Délai d'exécution : 2,5 mois durant la période de fermeture estivale.
+- Aucune interruption de fourniture d'eau durant les périodes d'accueil du public.
+
+2. NORMES ET RÉGLEMENTATIONS APPLICABLES :
+- DTU 60.1 : Plomberie sanitaire pour bâtiments (canalisations cuivre et multicouche).
+- DTU 68.3 : Installations de ventilation mécanique contrôlée (VMC double flux haut rendement).
+- Arrêté du 30 novembre 2005 relatif aux installations fixes destinées au chauffage et à l'alimentation en eau chaude sanitaire (prévention légionellose : température minimale 55°C aux points de puisage).
+- Robinetteries thermostatiques spéciales petite enfance limitées à 38°C anti-brûlure.
+
+3. QUALIFICATIONS PROFESSIONNELLES EXIGÉES :
+- Qualification Qualibat 5112 (Plomberie sanitaire) ou Qualibat 5312 (Installations thermiques).
+- Mention RGE (Reconnu Garant de l'Environnement).
+- Attestation d'Assurance Décennale et RC Pro en cours de validité.
+
+4. CLAUSES FINANCIÈRES ET PÉNALITÉS CONTRACTUELLES :
+- Pénalités de retard : 400 € HT par jour calendaire de retard, applicables de plein droit et sans mise en demeure.
+- Retenue de garantie : 5% prélevée sur chaque situation d'acompte.
+- Compte prorata : Forfaitisé à 1.5% du montant HT des travaux.
+- Délais de paiement : 30 jours via mandat administratif Chorus Pro.
+"""
+
+SAMPLE_3_DPGF_ITEMS = [
+    DPGFItem(item_number="1.01", designation="Installation de chantier, raccordements provisoires et protections antipoussière", unit="forfait", quantity=1.0, unit_price=1100.0, total_price=1100.0, lot="Lot 03 - Plomberie/CVC"),
+    DPGFItem(item_number="2.01", designation="Dépose des anciens ballons électriques et recyclage des métaux", unit="ens", quantity=1.0, unit_price=750.0, total_price=750.0, lot="Lot 03 - Plomberie/CVC"),
+    DPGFItem(item_number="3.01", designation="Chauffe-eau thermodynamique 300L COP>3.1 avec boucle d'eau chaude sanitaire", unit="u", quantity=2.0, unit_price=3200.0, total_price=6400.0, lot="Lot 03 - Plomberie/CVC"),
+    DPGFItem(item_number="3.02", designation="Distribution cuivre et multicouche isolé calorifugé anti-déperdition", unit="ml", quantity=160.0, unit_price=32.0, total_price=5120.0, lot="Lot 03 - Plomberie/CVC"),
+    DPGFItem(item_number="4.01", designation="Lavabo collectif maternelle avec mitigeurs temporisés anti-brûlure 38°C", unit="u", quantity=6.0, unit_price=420.0, total_price=2520.0, lot="Lot 03 - Plomberie/CVC"),
+    DPGFItem(item_number="4.02", designation="Cuvette WC suspendue taille enfant avec bâti-support autoportant Geberit", unit="u", quantity=8.0, unit_price=380.0, total_price=3040.0, lot="Lot 03 - Plomberie/CVC"),
+    DPGFItem(item_number="5.01", designation="Centrale de Traitement d'Air (CTA) double flux 1200 m³/h avec récupération 85%", unit="u", quantity=1.0, unit_price=7800.0, total_price=7800.0, lot="Lot 03 - Plomberie/CVC"),
+    DPGFItem(item_number="5.02", designation="Réseau aéraulique en acier galvanisé rigide avec bouches d'insufflation silencieuses", unit="ml", quantity=95.0, unit_price=45.0, total_price=4275.0, lot="Lot 03 - Plomberie/CVC"),
+    DPGFItem(item_number="6.01", designation="Équilibrage aéraulique, mise en service, désinfection des réseaux et DOE complet", unit="forfait", quantity=1.0, unit_price=1650.0, total_price=1650.0, lot="Lot 03 - Plomberie/CVC"),
+]
+
 def generate_sample_files_if_needed(target_dir: Path):
     """
     Generates realistic CCTP PDF and DPGF Excel sample files on disk for instant user testing.
@@ -137,6 +189,8 @@ def generate_sample_files_if_needed(target_dir: Path):
     xlsx1_path = target_dir / "DPGF_Electricite_Ecole_Pasteur.xlsx"
     pdf2_path = target_dir / "CCTP_Platrerie_Mediatheque.pdf"
     xlsx2_path = target_dir / "DPGF_Platrerie_Mediatheque.xlsx"
+    pdf3_path = target_dir / "CCTP_CVC_Plomberie_Creche.pdf"
+    xlsx3_path = target_dir / "DPGF_Lot03_CVC_Plomberie.xlsx"
 
     # Generate PDF 1
     if not pdf1_path.exists():
@@ -153,6 +207,14 @@ def generate_sample_files_if_needed(target_dir: Path):
     # Generate XLSX 2
     if not xlsx2_path.exists():
         _create_simple_excel(xlsx2_path, "DPGF Lot 04 - Plâtrerie", SAMPLE_2_DPGF_ITEMS)
+
+    # Generate PDF 3
+    if not pdf3_path.exists():
+        _create_simple_pdf(pdf3_path, "CCTP - PLOMBERIE SANITAIRE & CVC CRÈCHE", SAMPLE_3_CCTP_TEXT)
+
+    # Generate XLSX 3
+    if not xlsx3_path.exists():
+        _create_simple_excel(xlsx3_path, "DPGF Lot 03 - Plomberie CVC", SAMPLE_3_DPGF_ITEMS)
 
 def _create_simple_pdf(path: Path, title: str, content: str):
     doc = SimpleDocTemplate(str(path), pagesize=A4, leftMargin=15*mm, rightMargin=15*mm, topMargin=15*mm, bottomMargin=15*mm)

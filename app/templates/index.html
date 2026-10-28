@@ -65,10 +65,12 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+                <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
                     <a href="#comment-ca-marche" class="hover:text-[#1E3A8A] transition-colors">Comment ça marche</a>
                     <a href="#fonctionnalites" class="hover:text-[#1E3A8A] transition-colors">Fonctionnalités</a>
-                    <a href="#tarifs" class="hover:text-[#1E3A8A] transition-colors">Tarifs & Abonnements</a>
+                    <a href="#simulateur-roi" class="hover:text-[#1E3A8A] transition-colors">Calculateur ROI</a>
+                    <a href="#temoignages" class="hover:text-[#1E3A8A] transition-colors">Avis Artisans</a>
+                    <a href="#tarifs" class="hover:text-[#1E3A8A] transition-colors">Tarifs (300 €/an)</a>
                     <a href="#faq" class="hover:text-[#1E3A8A] transition-colors">FAQ</a>
                 </nav>
 
@@ -106,15 +108,25 @@
                 </p>
 
                 <!-- Hero Action Buttons -->
-                <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <button onclick="switchToDashboard()" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#EA580C] hover:bg-[#C2410C] text-white font-bold text-base shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2.5 transition-all">
+                <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <button onclick="switchToDashboard()" class="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-[#EA580C] hover:bg-[#C2410C] text-white font-bold text-sm sm:text-base shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2.5 transition-all">
                         <i data-lucide="file-search" class="w-5 h-5"></i>
-                        <span>Analyser un dossier gratuitement</span>
+                        <span>Tester gratuitement sur vos CCTP</span>
                     </button>
-                    <button onclick="switchToDashboardAndLoadSample('1')" class="w-full sm:w-auto px-6 py-4 rounded-xl bg-white hover:bg-slate-50 text-[#1E3A8A] font-bold text-sm border border-slate-300 shadow-sm flex items-center justify-center gap-2 transition-all">
-                        <i data-lucide="play-circle" class="w-4 h-4 text-[#EA580C]"></i>
-                        <span>Voir la démo (Lot Électricité)</span>
-                    </button>
+                    <div class="flex flex-wrap items-center justify-center gap-2">
+                        <button onclick="switchToDashboardAndLoadSample('1')" class="px-4 py-3 rounded-xl bg-white hover:bg-slate-50 text-[#1E3A8A] font-bold text-xs border border-slate-300 shadow-sm flex items-center gap-1.5 transition-all" title="Dossier réel Électricité">
+                            <i data-lucide="zap" class="w-3.5 h-3.5 text-[#EA580C]"></i>
+                            <span>Démo Élec</span>
+                        </button>
+                        <button onclick="switchToDashboardAndLoadSample('2')" class="px-4 py-3 rounded-xl bg-white hover:bg-slate-50 text-[#1E3A8A] font-bold text-xs border border-slate-300 shadow-sm flex items-center gap-1.5 transition-all" title="Dossier réel Plâtrerie">
+                            <i data-lucide="layers" class="w-3.5 h-3.5 text-slate-500"></i>
+                            <span>Démo Plâtrerie</span>
+                        </button>
+                        <button onclick="switchToDashboardAndLoadSample('3')" class="px-4 py-3 rounded-xl bg-white hover:bg-slate-50 text-[#1E3A8A] font-bold text-xs border border-slate-300 shadow-sm flex items-center gap-1.5 transition-all" title="Dossier réel Plomberie CVC">
+                            <i data-lucide="droplet" class="w-3.5 h-3.5 text-blue-600"></i>
+                            <span>Démo Plomberie CVC</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Key Metrics -->
@@ -278,6 +290,186 @@
             </div>
         </section>
 
+        <!-- Section : Simulateur de Rentabilité & Gain de Temps (ROI) -->
+        <section id="simulateur-roi" class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-slate-50 border-b border-slate-200">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center max-w-3xl mx-auto mb-12 space-y-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-[#EA580C]">Rentabilité Immédiate</span>
+                    <h2 class="text-3xl font-extrabold text-[#1E3A8A]">Combien d'heures et d'argent allez-vous économiser ?</h2>
+                    <p class="text-sm text-slate-600">Ajustez les curseurs ci-dessous selon la réalité de votre entreprise pour calculer votre retour sur investissement :</p>
+                </div>
+
+                <div class="saas-card p-6 sm:p-8 bg-white border-2 border-slate-200 shadow-md grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <!-- Left: Sliders -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <!-- Slider 1 -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-bold text-slate-800">
+                                <span>Appels d'offres reçus par mois :</span>
+                                <span id="roi-ao-display" class="font-mono text-base text-[#EA580C]">4 dossiers</span>
+                            </div>
+                            <input type="range" id="roi-slider-ao" min="1" max="20" value="4" step="1" class="w-full h-2 bg-slate-200 rounded-lg">
+                            <div class="flex justify-between text-[10px] text-slate-400 font-medium">
+                                <span>1 dossier / mois</span>
+                                <span>20 dossiers / mois</span>
+                            </div>
+                        </div>
+
+                        <!-- Slider 2 -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-bold text-slate-800">
+                                <span>Temps actuel passé par CCTP :</span>
+                                <span id="roi-hours-display" class="font-mono text-base text-[#1E3A8A]">3 heures</span>
+                            </div>
+                            <input type="range" id="roi-slider-hours" min="1" max="8" value="3" step="0.5" class="w-full h-2 bg-slate-200 rounded-lg">
+                            <div class="flex justify-between text-[10px] text-slate-400 font-medium">
+                                <span>1h (rapide)</span>
+                                <span>8h (très lourd)</span>
+                            </div>
+                        </div>
+
+                        <!-- Slider 3 -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-bold text-slate-800">
+                                <span>Coût horaire gérant / métreur :</span>
+                                <span id="roi-rate-display" class="font-mono text-base text-emerald-700">65 € / h</span>
+                            </div>
+                            <input type="range" id="roi-slider-rate" min="30" max="150" value="65" step="5" class="w-full h-2 bg-slate-200 rounded-lg">
+                            <div class="flex justify-between text-[10px] text-slate-400 font-medium">
+                                <span>30 €/h</span>
+                                <span>150 €/h</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Results Card -->
+                    <div class="lg:col-span-5 bg-gradient-to-br from-blue-900 to-[#0F172A] rounded-2xl p-6 text-white space-y-5 shadow-xl">
+                        <div class="text-xs uppercase font-bold tracking-wider text-amber-300 flex items-center gap-1.5">
+                            <i data-lucide="trending-up" class="w-4 h-4"></i>
+                            <span>Bilan Annuel Estimé</span>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="border-b border-slate-700/60 pb-3">
+                                <span class="text-xs text-slate-300 block">Temps libéré pour vos chantiers :</span>
+                                <div id="roi-result-hours" class="text-2xl sm:text-3xl font-black text-amber-300 font-mono mt-0.5">132 h / an</div>
+                                <span class="text-[11px] text-slate-400">Soit ~11 heures de travail par mois</span>
+                            </div>
+
+                            <div class="border-b border-slate-700/60 pb-3">
+                                <span class="text-xs text-slate-300 block">Valeur financière économisée :</span>
+                                <div id="roi-result-money" class="text-2xl sm:text-3xl font-black text-emerald-400 font-mono mt-0.5">8 580 € / an</div>
+                                <span class="text-[11px] text-slate-400">Coût de l'abonnement : seulement 300 € HT/an</span>
+                            </div>
+
+                            <div>
+                                <span class="text-xs text-slate-300 block">Retour sur Investissement (ROI) :</span>
+                                <div id="roi-result-percent" class="text-xl sm:text-2xl font-black text-white font-mono mt-0.5">+2 760 %</div>
+                                <span class="text-[10px] text-amber-300 font-semibold">Rentabilisé dès le 1er appel d'offres analysé</span>
+                            </div>
+                        </div>
+
+                        <button onclick="switchToDashboard()" class="w-full py-3 rounded-xl bg-[#EA580C] hover:bg-[#C2410C] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2">
+                            <span>Tester sur vos dossiers</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section : Témoignages & Retours d'Expérience Artisans BTP -->
+        <section id="temoignages" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#1E3A8A]">Avis Vérifiés BTP</span>
+                <h2 class="text-3xl font-extrabold text-slate-900">Adopté par plus de 350 artisans & PME du bâtiment</h2>
+                <p class="text-sm text-slate-600">Découvrez comment ils ont sécurisé leurs marges et évité les pièges de pénalités contractuelles.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Testimonial 1 -->
+                <div class="saas-card p-6 bg-white space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-1 text-amber-500">
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                            <span class="text-xs font-bold text-slate-600 ml-2">5.0 / 5</span>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed italic">
+                            « Sur un marché de rénovation d'un groupe scolaire, le logiciel a repéré 500 € par jour de pénalité de retard sans mise en demeure et des clauses de prix fermes. On a pu émettre nos réserves à temps dans notre acte d'engagement ! »
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 text-[#1E3A8A] flex items-center justify-center font-bold text-xs">
+                            MD
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-slate-900">Marc Delattre</div>
+                            <div class="text-[11px] text-slate-500">Gérant SARL Elec-Pro (Lyon) • 6 salariés</div>
+                            <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 inline-block mt-0.5">Qualifelec RGE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="saas-card p-6 bg-white space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-1 text-amber-500">
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                            <span class="text-xs font-bold text-slate-600 ml-2">5.0 / 5</span>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed italic">
+                            « Je passais mes dimanches soirs à éplucher des CCTP de 180 pages. En 60 secondes chrono, j'ai les normes DTU exactes, la liste des pièces obligatoires pour le dépôt et mon export DPGF prêt pour Excel. Les 300 € sont remboursés au premier dossier. »
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-orange-100 text-[#EA580C] flex items-center justify-center font-bold text-xs">
+                            JL
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-slate-900">Jean-Luc Bertin</div>
+                            <div class="text-[11px] text-slate-500">Artisan Plâtrier-Plaquiste (Bordeaux)</div>
+                            <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 inline-block mt-0.5">Qualibat 4112</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="saas-card p-6 bg-white space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-1 text-amber-500">
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                            <span class="text-xs font-bold text-slate-600 ml-2">5.0 / 5</span>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed italic">
+                            « La checklist administrative évite les offres rejetées pour une bête attestation d'assurance non conforme ou une déclaration d'effectif manquante. Le simulateur de marge avec coefficient de frais généraux nous garantit de ne jamais chiffrer à perte. »
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs">
+                            ST
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-slate-900">Sophie Terrier</div>
+                            <div class="text-[11px] text-slate-500">Directrice Études PME Génie Climatique (Nantes)</div>
+                            <span class="text-[10px] font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 inline-block mt-0.5">CVC / Plomberie</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Section : Tarifs B2B (Abonnement 300€/an + Crédits) -->
         <section id="tarifs" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
             <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
@@ -417,21 +609,97 @@
             </div>
         </section>
 
-        <!-- Section FAQ -->
+        <!-- Section FAQ (Accordéon Interactif) -->
         <section id="faq" class="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
-            <h2 class="text-2xl font-bold text-[#1E3A8A] text-center mb-8">Questions Fréquemment Posées</h2>
-            <div class="space-y-4">
-                <div class="saas-card p-5">
-                    <h4 class="text-sm font-bold text-slate-900 mb-1">Est-ce adapté à mon corps d'état du bâtiment ?</h4>
-                    <p class="text-xs text-slate-600">Oui. Le moteur intègre la nomenclature AFNOR et CSTB pour tous les corps d'état : Électricité (CFO/CFA), Plâtrerie/Isolation, Plomberie/CVC, Gros Œuvre, Menuiserie, Peinture et Couverture.</p>
+            <div class="text-center mb-10 space-y-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#EA580C]">Réponses Précises</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-[#1E3A8A]">Questions Fréquemment Posées</h2>
+                <p class="text-xs text-slate-500">Tout ce que vous devez savoir sur le fonctionnement, les normes BTP et la sécurité de vos données.</p>
+            </div>
+            
+            <div class="space-y-3.5" id="faq-accordion-container">
+                <!-- Q1 -->
+                <div class="faq-item saas-card p-5 cursor-pointer transition-all active border-slate-300 shadow-sm" onclick="toggleFaq(this)">
+                    <div class="flex items-center justify-between gap-4">
+                        <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2.5">
+                            <i data-lucide="help-circle" class="w-4 h-4 text-[#EA580C] shrink-0"></i>
+                            <span>Est-ce adapté à mon corps d'état du bâtiment ?</span>
+                        </h4>
+                        <i data-lucide="chevron-down" class="faq-chevron w-4 h-4 text-slate-400 shrink-0"></i>
+                    </div>
+                    <div class="faq-answer pt-3 text-xs text-slate-600 leading-relaxed border-t border-slate-100 mt-3">
+                        Oui, absolument. Le moteur expert intègre la nomenclature AFNOR et CSTB pour tous les corps d'état du bâtiment : <strong>Électricité CFO/CFA</strong> (NF C 15-100, NF C 14-100, SSI), <strong>Plâtrerie & Isolation</strong> (DTU 25.41, DTU 58.1), <strong>Plomberie & CVC</strong> (DTU 60.1, DTU 68.3), <strong>Gros Œuvre & Maçonnerie</strong> (DTU 20.1, DTU 21), <strong>Menuiserie</strong> (DTU 36.5) et <strong>Couverture & Étanchéité</strong> (DTU 40.x, DTU 43.1).
+                    </div>
                 </div>
-                <div class="saas-card p-5">
-                    <h4 class="text-sm font-bold text-slate-900 mb-1">Puis-je tester avant de souscrire l'abonnement à 300 €/an ?</h4>
-                    <p class="text-xs text-slate-600">Absolument ! Vous avez accès gratuitement au tableau de bord avec les exemples réels pré-chargés (Groupe Scolaire et Médiathèque) pour constater l'efficacité en direct.</p>
+
+                <!-- Q2 -->
+                <div class="faq-item saas-card p-5 cursor-pointer transition-all" onclick="toggleFaq(this)">
+                    <div class="flex items-center justify-between gap-4">
+                        <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2.5">
+                            <i data-lucide="cpu" class="w-4 h-4 text-[#1E3A8A] shrink-0"></i>
+                            <span>Comment fonctionne l'analyse sans clé d'API Google Gemini ?</span>
+                        </h4>
+                        <i data-lucide="chevron-down" class="faq-chevron w-4 h-4 text-slate-400 shrink-0"></i>
+                    </div>
+                    <div class="faq-answer pt-3 text-xs text-slate-600 leading-relaxed border-t border-slate-100 mt-3">
+                        L'application intègre son propre <strong>moteur expert BTP local</strong>, 100% autonome et gratuit. Il applique les règles du Code de la commande publique (CCAG Travaux 2026), extrait les clauses critiques du CCTP/CCAP et parse vos bordereaux DPGF sans nécessiter de connexion externe ni de frais tiers. Si vous disposez d'une clé Gemini, vous pouvez l'activer pour enrichir l'analyse textuelle.
+                    </div>
                 </div>
-                <div class="saas-card p-5">
-                    <h4 class="text-sm font-bold text-slate-900 mb-1">Mes documents et prix unitaires restent-ils confidentiels ?</h4>
-                    <p class="text-xs text-slate-600">Totalement. Vos devis, DPGF et CCTP ne sont ni partagés, ni utilisés pour entraîner des modèles publics. Vos chiffrages restent strictement la propriété de votre entreprise.</p>
+
+                <!-- Q3 -->
+                <div class="faq-item saas-card p-5 cursor-pointer transition-all" onclick="toggleFaq(this)">
+                    <div class="flex items-center justify-between gap-4">
+                        <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2.5">
+                            <i data-lucide="play" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                            <span>Puis-je tester avant de souscrire l'abonnement à 300 € / an ?</span>
+                        </h4>
+                        <i data-lucide="chevron-down" class="faq-chevron w-4 h-4 text-slate-400 shrink-0"></i>
+                    </div>
+                    <div class="faq-answer pt-3 text-xs text-slate-600 leading-relaxed border-t border-slate-100 mt-3">
+                        Oui ! Vous avez un accès direct au tableau de bord avec les 3 dossiers de démonstration complets (Groupe Scolaire Pasteur en Électricité, Médiathèque en Plâtrerie et Crèche en Plomberie/CVC). Vous pouvez également glisser vos propres fichiers PDF et Excel pour voir le résultat immédiatement.
+                    </div>
+                </div>
+
+                <!-- Q4 -->
+                <div class="faq-item saas-card p-5 cursor-pointer transition-all" onclick="toggleFaq(this)">
+                    <div class="flex items-center justify-between gap-4">
+                        <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2.5">
+                            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0"></i>
+                            <span>Comment sont détectées les pénalités de retard dans le CCAP ?</span>
+                        </h4>
+                        <i data-lucide="chevron-down" class="faq-chevron w-4 h-4 text-slate-400 shrink-0"></i>
+                    </div>
+                    <div class="faq-answer pt-3 text-xs text-slate-600 leading-relaxed border-t border-slate-100 mt-3">
+                        L'algorithme scrute les sections contractuelles du CCAP et du Règlement de Consultation (RC). Il repère les pénalités journalières forfaitaires (ex: 350 € ou 500 €/jour), les clauses dérogatoires au CCAG Travaux (absence de mise en demeure, pénalités non plafonnées), ainsi que le taux de retenue de garantie (5%) et les charges du compte prorata (1,5% à 2,5%).
+                    </div>
+                </div>
+
+                <!-- Q5 -->
+                <div class="faq-item saas-card p-5 cursor-pointer transition-all" onclick="toggleFaq(this)">
+                    <div class="flex items-center justify-between gap-4">
+                        <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2.5">
+                            <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-700 shrink-0"></i>
+                            <span>La grille DPGF est-elle compatible avec mes logiciels de devis BTP ?</span>
+                        </h4>
+                        <i data-lucide="chevron-down" class="faq-chevron w-4 h-4 text-slate-400 shrink-0"></i>
+                    </div>
+                    <div class="faq-answer pt-3 text-xs text-slate-600 leading-relaxed border-t border-slate-100 mt-3">
+                        Oui. Vous pouvez exporter vos métrés sous deux formats universels : un <strong>classeur Excel (.xlsx)</strong> avec 4 onglets prêts à l'emploi (Métré DPGF avec formules dynamiques, Décomposition des coûts, Synthèse de remise d'offre et Formules types) et un <strong>fichier CSV</strong> directement importable dans Batappli, ProDevis, Obat, Sage BTP ou EBP Bâtiment.
+                    </div>
+                </div>
+
+                <!-- Q6 -->
+                <div class="faq-item saas-card p-5 cursor-pointer transition-all" onclick="toggleFaq(this)">
+                    <div class="flex items-center justify-between gap-4">
+                        <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2.5">
+                            <i data-lucide="lock" class="w-4 h-4 text-slate-700 shrink-0"></i>
+                            <span>Mes devis et documents déposés restent-ils strictement confidentiels ?</span>
+                        </h4>
+                        <i data-lucide="chevron-down" class="faq-chevron w-4 h-4 text-slate-400 shrink-0"></i>
+                    </div>
+                    <div class="faq-answer pt-3 text-xs text-slate-600 leading-relaxed border-t border-slate-100 mt-3">
+                        Totalement. Vos fichiers CCTP, DPGF et vos prix unitaires restent strictement confidentiels au sein de votre session. Ils ne sont ni revendus, ni indexés, ni réutilisés pour entraîner des modèles publics. Vos secrets de chiffrage restent votre propriété exclusive.
+                    </div>
                 </div>
             </div>
         </section>
@@ -578,6 +846,10 @@
                             <button id="btn-sample-2" class="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-bold transition-colors flex items-center gap-1.5">
                                 <i data-lucide="layers" class="w-3.5 h-3.5 text-slate-500"></i>
                                 <span>Lot 04 Plâtrerie (Médiathèque)</span>
+                            </button>
+                            <button id="btn-sample-3" class="px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 text-[#1E3A8A] text-xs font-bold transition-colors flex items-center gap-1.5">
+                                <i data-lucide="droplet" class="w-3.5 h-3.5 text-blue-600"></i>
+                                <span>Lot 03 Plomberie/CVC (Crèche)</span>
                             </button>
                         </div>
                     </div>
@@ -1001,8 +1273,14 @@
                                         <i data-lucide="list" class="w-4 h-4 text-[#EA580C]"></i>
                                         Bordereau des Postes Extraits de la DPGF
                                     </h4>
-                                    <div class="w-full sm:w-64">
-                                        <input type="text" id="dpgf-search-input" placeholder="Filtrer un poste (ex: LED, câble)..." class="w-full px-3 py-1.5 rounded-md bg-white border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:border-[#EA580C] focus:outline-none">
+                                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                                        <div class="w-full sm:w-64">
+                                            <input type="text" id="dpgf-search-input" placeholder="Filtrer un poste (ex: LED, câble)..." class="w-full px-3 py-1.5 rounded-md bg-white border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:border-[#EA580C] focus:outline-none">
+                                        </div>
+                                        <button type="button" onclick="promptAddDpgfLine()" class="px-3 py-1.5 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold flex items-center gap-1.5 shrink-0 transition-colors" title="Ajouter un poste supplémentaire au métré">
+                                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                            <span>Ajouter</span>
+                                        </button>
                                     </div>
                                 </div>
 
@@ -1051,27 +1329,49 @@
 
                 <!-- SUB-VIEW 2 : HISTORIQUE DES DOSSIERS -->
                 <div id="subview-historique" class="hidden space-y-6">
-                    <div class="saas-card p-6 bg-white space-y-4">
-                        <div class="flex items-center justify-between">
+                    <div class="saas-card p-6 bg-white space-y-5">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <div>
-                                <h3 class="text-base font-bold text-slate-900">Historique de vos Marchés Analysés</h3>
-                                <p class="text-xs text-slate-500 mt-0.5">Retrouvez toutes vos analyses, scores de risque et fiches de chiffrage passées.</p>
+                                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="folder-clock" class="w-5 h-5 text-[#1E3A8A]"></i>
+                                    <span>Historique de vos Marchés Analysés</span>
+                                </h3>
+                                <p class="text-xs text-slate-500 mt-0.5">Retrouvez toutes vos analyses, scores de risque et fiches de chiffrage sauvegardées.</p>
                             </div>
-                            <button onclick="switchSidebarTab('nouvelle-analyse')" class="btn-primary-orange text-xs flex items-center gap-1.5">
-                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                                <span>Nouvelle Analyse</span>
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <button onclick="clearHistory()" class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:text-rose-600 hover:bg-rose-50 text-xs font-semibold flex items-center gap-1.5 transition-colors" title="Effacer l'historique">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                    <span>Vider</span>
+                                </button>
+                                <button onclick="switchSidebarTab('nouvelle-analyse')" class="btn-primary-orange text-xs flex items-center gap-1.5">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                    <span>Nouvelle Analyse</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Search and Filter Bar -->
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1 border-t border-slate-100">
+                            <div class="w-full sm:w-72 relative">
+                                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5"></i>
+                                <input type="text" id="history-search-input" placeholder="Rechercher un marché ou acheteur..." class="w-full pl-8 pr-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:border-[#EA580C] focus:outline-none">
+                            </div>
+                            <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+                                <button onclick="filterHistory('ALL')" id="filter-btn-all" class="history-filter-btn px-2.5 py-1 rounded text-[11px] font-bold bg-[#1E3A8A] text-white">Tous</button>
+                                <button onclick="filterHistory('GO')" id="filter-btn-go" class="history-filter-btn px-2.5 py-1 rounded text-[11px] font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">GO</button>
+                                <button onclick="filterHistory('GO_AVEC_RESERVES')" id="filter-btn-reserve" class="history-filter-btn px-2.5 py-1 rounded text-[11px] font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">Avec Réserves</button>
+                                <button onclick="filterHistory('NO_GO')" id="filter-btn-nogo" class="history-filter-btn px-2.5 py-1 rounded text-[11px] font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">NO-GO</button>
+                            </div>
                         </div>
 
                         <div class="overflow-x-auto rounded-lg border border-slate-200">
                             <table class="w-full text-left text-xs">
                                 <thead class="bg-slate-50 text-slate-700 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
                                     <tr>
-                                        <th class="p-3">Référence</th>
-                                        <th class="p-3">Date</th>
+                                        <th class="p-3">Réf / Date</th>
                                         <th class="p-3">Intitulé du Marché</th>
                                         <th class="p-3">Acheteur (MOA)</th>
-                                        <th class="p-3 text-center">Score & Verdict</th>
+                                        <th class="p-3 text-center">Verdict & Score</th>
                                         <th class="p-3 text-right">Actions</th>
                                     </tr>
                                 </thead>
@@ -1083,65 +1383,315 @@
                     </div>
                 </div>
 
-                <!-- SUB-VIEW 3 : SIMULATEUR DIRECT -->
+                <!-- SUB-VIEW 3 : GRILLE DPGF & SIMULATEUR DE MARGES -->
                 <div id="subview-simulateur" class="hidden space-y-6">
-                    <div class="saas-card p-6 bg-white space-y-4">
-                        <h3 class="text-base font-bold text-slate-900">Outil de Simulation de Rentabilité BTP</h3>
-                        <p class="text-xs text-slate-500">Pour utiliser le simulateur sur une DPGF complète, chargez un dossier depuis l'onglet Nouvelle Analyse.</p>
-                        <div class="pt-2">
-                            <button onclick="switchToDashboardAndLoadSample('1')" class="btn-primary-orange text-xs flex items-center gap-2">
-                                <i data-lucide="calculator" class="w-4 h-4"></i>
-                                <span>Charger un exemple de DPGF et simuler</span>
-                            </button>
+                    <!-- Banner if no active analysis -->
+                    <div id="sim-no-analysis-banner" class="saas-card p-6 bg-white space-y-4">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div>
+                                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="calculator" class="w-5 h-5 text-[#EA580C]"></i>
+                                    <span>Simulateur de Marges & Déboursé Sec BTP</span>
+                                </h3>
+                                <p class="text-xs text-slate-500 mt-0.5">Aucun marché n'est actuellement ouvert dans l'éditeur. Chargez un exemple réel ou utilisez le calculateur rapide ci-dessous :</p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button onclick="switchToDashboardAndLoadSample('1')" class="px-3 py-1.5 rounded-lg bg-orange-50 hover:bg-orange-100 border border-orange-200 text-[#EA580C] text-xs font-bold transition-colors flex items-center gap-1.5">
+                                    <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                                    <span>Lot Élec (École)</span>
+                                </button>
+                                <button onclick="switchToDashboardAndLoadSample('2')" class="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-bold transition-colors flex items-center gap-1.5">
+                                    <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                                    <span>Lot Plâtrerie (Médiathèque)</span>
+                                </button>
+                                <button onclick="switchToDashboardAndLoadSample('3')" class="px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 text-[#1E3A8A] text-xs font-bold transition-colors flex items-center gap-1.5">
+                                    <i data-lucide="droplet" class="w-3.5 h-3.5 text-blue-600"></i>
+                                    <span>Lot CVC (Crèche)</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Standalone Rapid BTP Estimator -->
+                        <div class="mt-4 pt-4 border-t border-slate-100 space-y-5">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700">Calculateur Rapide de Chiffrage BTP (Mode Autonome)</h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
+                                    <label class="block text-xs font-bold text-slate-700">1. Fournitures & Matériaux (€ HT) :</label>
+                                    <input type="number" id="quick-mat" value="12500" step="100" min="0" oninput="calculateQuickMargin()" class="w-full bg-white border border-slate-300 rounded-md px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#EA580C] focus:outline-none">
+                                    <span class="text-[10px] text-slate-500">Câbles, appareillages, plaques, tuyauterie...</span>
+                                </div>
+                                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
+                                    <label class="block text-xs font-bold text-slate-700">2. Main d'Œuvre (Heures × Taux) :</label>
+                                    <div class="flex gap-2">
+                                        <input type="number" id="quick-heures" value="120" step="5" min="0" placeholder="Heures" oninput="calculateQuickMargin()" class="w-1/2 bg-white border border-slate-300 rounded-md px-2 py-1.5 text-xs text-slate-900 font-mono focus:border-[#EA580C] focus:outline-none">
+                                        <input type="number" id="quick-taux-mo" value="48" step="1" min="20" placeholder="€/h" oninput="calculateQuickMargin()" class="w-1/2 bg-white border border-slate-300 rounded-md px-2 py-1.5 text-xs text-slate-900 font-mono focus:border-[#EA580C] focus:outline-none">
+                                    </div>
+                                    <div class="flex justify-between text-[10px] text-slate-500">
+                                        <span>Total MO : <strong id="quick-total-mo" class="text-slate-800">5 760 €</strong></span>
+                                        <span>Taux moyen de revient</span>
+                                    </div>
+                                </div>
+                                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
+                                    <label class="block text-xs font-bold text-slate-700">3. Sous-traitance & Locations (€ HT) :</label>
+                                    <input type="number" id="quick-sub" value="1800" step="100" min="0" oninput="calculateQuickMargin()" class="w-full bg-white border border-slate-300 rounded-md px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#EA580C] focus:outline-none">
+                                    <span class="text-[10px] text-slate-500">Nacelles, échafaudages, carottage...</span>
+                                </div>
+                            </div>
+
+                            <!-- Sliders for FG and Net Margin -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+                                    <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                                        <span>Frais Généraux :</span>
+                                        <span id="quick-fg-val" class="font-mono text-[#1E3A8A]">12 %</span>
+                                    </div>
+                                    <input type="range" id="quick-fg-slider" min="5" max="30" value="12" step="0.5" oninput="calculateQuickMargin()" class="w-full h-1.5 bg-slate-200 rounded-lg">
+                                    <span class="text-[10px] text-slate-500 mt-1 block">Charges fixes de structure</span>
+                                </div>
+                                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+                                    <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                                        <span>Marge Nette Ciblée :</span>
+                                        <span id="quick-marge-val" class="font-mono text-[#EA580C]">15 %</span>
+                                    </div>
+                                    <input type="range" id="quick-marge-slider" min="5" max="35" value="15" step="0.5" oninput="calculateQuickMargin()" class="w-full h-1.5 bg-slate-200 rounded-lg">
+                                    <span class="text-[10px] text-slate-500 mt-1 block">Bénéfice net artisan</span>
+                                </div>
+                                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Taux de TVA :</label>
+                                    <select id="quick-tva-select" onchange="calculateQuickMargin()" class="w-full bg-white border border-slate-300 rounded-md px-3 py-1 text-xs text-slate-900 font-mono focus:border-[#EA580C] focus:outline-none">
+                                        <option value="20">20.0% (Neuf & Rénovation standard)</option>
+                                        <option value="10">10.0% (Rénovation locaux > 2 ans)</option>
+                                        <option value="5.5">5.5% (Rénovation énergétique RGE)</option>
+                                    </select>
+                                    <span class="text-[10px] text-slate-500 mt-1 block">TVA applicable</span>
+                                </div>
+                            </div>
+
+                            <!-- Cost Breakdown Visual Segmented Bar -->
+                            <div class="space-y-1.5 pt-2">
+                                <div class="flex justify-between text-[11px] font-semibold text-slate-600">
+                                    <span>Répartition du Prix de Vente HT :</span>
+                                    <span id="quick-coeff-k" class="font-mono font-bold text-[#1E3A8A]">Coeff de vente K : 1.37</span>
+                                </div>
+                                <div class="w-full h-4 bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
+                                    <div id="bar-segment-mat" class="h-full bg-blue-600 transition-all duration-300" style="width: 48%" title="Matériaux"></div>
+                                    <div id="bar-segment-mo" class="h-full bg-sky-500 transition-all duration-300" style="width: 25%" title="Main d'œuvre"></div>
+                                    <div id="bar-segment-fg" class="h-full bg-amber-500 transition-all duration-300" style="width: 12%" title="Frais généraux"></div>
+                                    <div id="bar-segment-marge" class="h-full bg-[#EA580C] transition-all duration-300" style="width: 15%" title="Marge nette"></div>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-4 text-[10px] text-slate-500 pt-1">
+                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span> Fournitures</span>
+                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span> Main d'œuvre</span>
+                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Frais Généraux</span>
+                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#EA580C]"></span> Marge Nette</span>
+                                </div>
+                            </div>
+
+                            <!-- Live Rapid Results Cards -->
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 pt-3">
+                                <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase block">Déboursé Sec</span>
+                                    <div id="quick-res-ds" class="text-base font-bold font-mono text-slate-900 mt-1">20 060 €</div>
+                                    <span class="text-[9px] text-slate-500">Coût direct chantier</span>
+                                </div>
+                                <div class="p-3 rounded-lg bg-amber-50 border border-amber-200">
+                                    <span class="text-[10px] font-bold text-amber-800 uppercase block">Frais Généraux</span>
+                                    <div id="quick-res-fg" class="text-base font-bold font-mono text-amber-800 mt-1">3 300 €</div>
+                                    <span class="text-[9px] text-amber-700">Quote-part structure</span>
+                                </div>
+                                <div class="p-3 rounded-lg bg-orange-50 border border-orange-200">
+                                    <span class="text-[10px] font-bold text-[#EA580C] uppercase block">Bénéfice Net</span>
+                                    <div id="quick-res-marge" class="text-base font-bold font-mono text-[#EA580C] mt-1">4 125 €</div>
+                                    <span class="text-[9px] text-orange-700">Marge nette artisan</span>
+                                </div>
+                                <div class="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                                    <span class="text-[10px] font-bold text-[#1E3A8A] uppercase block">Prix Vente HT</span>
+                                    <div id="quick-res-pvht" class="text-base font-black font-mono text-[#1E3A8A] mt-1">27 500 €</div>
+                                    <span class="text-[9px] text-blue-700">Prix à soumissionner</span>
+                                </div>
+                                <div class="p-3 rounded-lg bg-emerald-50 border border-emerald-300">
+                                    <span class="text-[10px] font-bold text-emerald-800 uppercase block">TOTAL TTC</span>
+                                    <div id="quick-res-pvttc" class="text-base font-black font-mono text-emerald-800 mt-1">33 000 €</div>
+                                    <span class="text-[9px] text-emerald-700">Montant client final</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Analysis Simulator View (Mirror of the results tab) -->
+                    <div id="sim-active-container" class="hidden space-y-6">
+                        <!-- Populated dynamically when an analysis is active -->
+                    </div>
+                </div>
+
+                <!-- SUB-VIEW 4 : CHECKLIST DÉPÔT D'OFFRE -->
+                <div id="subview-checklist" class="hidden space-y-6">
+                    <div class="saas-card p-6 bg-white space-y-5">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                            <div>
+                                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="check-square" class="w-5 h-5 text-emerald-600"></i>
+                                    <span>Checklist de Candidature & Dépôt d'Offre BTP</span>
+                                </h3>
+                                <p class="text-xs text-slate-500 mt-0.5">Vérifiez que toutes les pièces obligatoires sont prêtes avant de déposer sur le profil d'acheteur (AWS, Maximilien, etc.).</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="text-right">
+                                    <span id="subview-checklist-count" class="text-xs font-mono font-bold text-[#EA580C]">5/8 pièces prêtes</span>
+                                    <div class="w-32 bg-slate-200 h-2 rounded-full overflow-hidden mt-1">
+                                        <div id="subview-checklist-bar" class="h-full bg-emerald-600 rounded-full transition-all duration-300" style="width: 62%"></div>
+                                    </div>
+                                </div>
+                                <button onclick="window.print()" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                                    <span>Imprimer</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Category Tabs & Quick Add -->
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <button onclick="filterChecklist('all')" id="chk-tab-all" class="chk-filter-btn px-3 py-1 rounded text-xs font-bold bg-[#1E3A8A] text-white">Toutes (8)</button>
+                                <button onclick="filterChecklist('candidature')" id="chk-tab-candidature" class="chk-filter-btn px-3 py-1 rounded text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Candidature DC1/DC2</button>
+                                <button onclick="filterChecklist('offre')" id="chk-tab-offre" class="chk-filter-btn px-3 py-1 rounded text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Offre & Mémoire</button>
+                                <button onclick="filterChecklist('specifique')" id="chk-tab-specifique" class="chk-filter-btn px-3 py-1 rounded text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Habilitations & Décennale</button>
+                            </div>
+
+                            <!-- Add custom requirement item -->
+                            <div class="flex items-center gap-2 w-full sm:w-auto">
+                                <input type="text" id="new-checklist-input" placeholder="Ajouter une pièce spécifique..." class="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:border-[#EA580C] focus:outline-none grow sm:w-60">
+                                <button onclick="addCustomChecklistItem()" class="px-3 py-1.5 rounded-lg bg-[#EA580C] hover:bg-[#C2410C] text-white text-xs font-bold flex items-center gap-1 shrink-0 transition-colors">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                    <span>Ajouter</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Checklist Container -->
+                        <div id="subview-checklist-items" class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                            <!-- Populated dynamically via JS -->
                         </div>
                     </div>
                 </div>
 
-                <!-- SUB-VIEW 4 : MON COMPTE & CRÉDITS -->
+                <!-- SUB-VIEW 5 : MON COMPTE & CRÉDITS -->
                 <div id="subview-compte" class="hidden space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Card 1 : Abonnement -->
-                        <div class="saas-card p-6 bg-white space-y-4">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold uppercase tracking-wider text-[#EA580C]">Abonnement Actif</span>
-                                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">En règle</span>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        
+                        <!-- Col 1 & 2 : Profil Entreprise BTP Éditable -->
+                        <div class="lg:col-span-2 saas-card p-6 bg-white space-y-5">
+                            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                                <div>
+                                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                        <i data-lucide="building-2" class="w-5 h-5 text-[#1E3A8A]"></i>
+                                        <span>Fiche Entreprise BTP & Coordonnées</span>
+                                    </h3>
+                                    <p class="text-xs text-slate-500 mt-0.5">Ces informations sont utilisées pour personnaliser vos rapports et mémoires techniques.</p>
+                                </div>
+                                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Profil Actif</span>
                             </div>
-                            <h3 class="text-lg font-bold text-slate-900">Abonnement Annuel Pro Artisans</h3>
-                            <div class="text-2xl font-black text-[#1E3A8A]">300,00 € HT <span class="text-xs font-normal text-slate-500">/ an</span></div>
-                            <p class="text-xs text-slate-600">Renouvellement automatique le 28/10/2027. Vous bénéficiez d'analyses et exports illimités sans restriction.</p>
-                            
-                            <div class="pt-3 border-t border-slate-100 space-y-2 text-xs">
-                                <div class="flex justify-between text-slate-600">
-                                    <span>Quota d'analyses CCTP :</span>
-                                    <span class="font-bold text-emerald-700">Illimité</span>
+
+                            <form id="profile-form" onsubmit="saveCompanyProfile(event)" class="space-y-4 text-xs">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block font-bold text-slate-700 mb-1">Raison Sociale / Nom :</label>
+                                        <input type="text" id="prof-company" value="SAS Artisan BTP Travaux" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-semibold focus:border-[#EA580C] focus:outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block font-bold text-slate-700 mb-1">Numéro SIRET (14 chiffres) :</label>
+                                        <input type="text" id="prof-siret" value="849 123 456 00012" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono focus:border-[#EA580C] focus:outline-none">
+                                    </div>
                                 </div>
-                                <div class="flex justify-between text-slate-600">
-                                    <span>Support prioritaire BTP :</span>
-                                    <span class="font-bold text-slate-800">Inclus (24/7)</span>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block font-bold text-slate-700 mb-1">Corps d'état principal :</label>
+                                        <select id="prof-trade" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:border-[#EA580C] focus:outline-none">
+                                            <option value="Électricité générale & CFO/CFA">Électricité générale & CFO/CFA</option>
+                                            <option value="Plâtrerie, Isolation & Faux-plafonds">Plâtrerie, Isolation & Faux-plafonds</option>
+                                            <option value="Plomberie, Chauffage & CVC">Plomberie, Chauffage & CVC</option>
+                                            <option value="Maçonnerie & Gros Œuvre">Maçonnerie & Gros Œuvre</option>
+                                            <option value="Menuiserie & Agencement">Menuiserie & Agencement</option>
+                                            <option value="Couverture, Zinguerie & Étanchéité">Couverture, Zinguerie & Étanchéité</option>
+                                            <option value="Tous Corps d'État (TCE)">Tous Corps d'État (TCE)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block font-bold text-slate-700 mb-1">Responsable / Métreur :</label>
+                                        <input type="text" id="prof-contact" value="Jean Dupont (Gérant)" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:border-[#EA580C] focus:outline-none">
+                                    </div>
                                 </div>
-                                <div class="flex justify-between text-slate-600">
-                                    <span>Mises à jour DTU CSTB :</span>
-                                    <span class="font-bold text-slate-800">Automatiques</span>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block font-bold text-slate-700 mb-1">Compagnie d'Assurance Décennale :</label>
+                                        <input type="text" id="prof-insurance" value="SMABTP (Police N° 987654321 - Valide)" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:border-[#EA580C] focus:outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block font-bold text-slate-700 mb-1">Qualifications & Certifications :</label>
+                                        <input type="text" id="prof-qualifs" value="Qualifelec RGE E2-C2, Qualibat 4112" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:border-[#EA580C] focus:outline-none">
+                                    </div>
+                                </div>
+
+                                <div class="pt-2 flex justify-end">
+                                    <button type="submit" class="btn-primary-orange text-xs flex items-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4"></i>
+                                        <span>Enregistrer les coordonnées</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Col 3 : Abonnement & Facturation -->
+                        <div class="space-y-6">
+                            <!-- Subscription Badge -->
+                            <div class="saas-card p-6 bg-white space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-[#EA580C]">Abonnement Annuel</span>
+                                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Illimité</span>
+                                </div>
+                                <h4 class="text-base font-bold text-slate-900">Formule Pro Artisans BTP</h4>
+                                <div class="text-3xl font-black text-[#1E3A8A] font-mono">300,00 € HT <span class="text-xs font-normal text-slate-500">/ an</span></div>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    Renouvellement automatique le <strong>28/10/2027</strong>. Analyses CCTP, extractions DPGF et exports illimités.
+                                </p>
+                                
+                                <div class="pt-3 border-t border-slate-100 space-y-2 text-xs">
+                                    <div class="flex justify-between text-slate-600">
+                                        <span>Quota CCTP :</span>
+                                        <span class="font-bold text-emerald-700">Illimité</span>
+                                    </div>
+                                    <div class="flex justify-between text-slate-600">
+                                        <span>Support prioritaire BTP :</span>
+                                        <span class="font-bold text-slate-800">Inclus 24/7</span>
+                                    </div>
+                                    <div class="flex justify-between text-slate-600">
+                                        <span>Mises à jour CSTB / DTU :</span>
+                                        <span class="font-bold text-slate-800">Automatiques</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Invoice History -->
+                            <div class="saas-card p-5 bg-white space-y-3">
+                                <div class="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center justify-between">
+                                    <span>Historique Facturation</span>
+                                    <span class="text-[10px] text-emerald-700 font-bold">1 facture</span>
+                                </div>
+                                <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+                                    <div>
+                                        <div class="font-bold text-slate-900">FAC-2026-1028</div>
+                                        <div class="text-[10px] text-slate-500">28/10/2026 • 300,00 € HT</div>
+                                    </div>
+                                    <button onclick="downloadSampleInvoice()" class="px-2 py-1 rounded bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-semibold text-[11px] transition-colors" title="Télécharger le reçu de paiement">
+                                        Reçu PDF
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Card 2 : Entreprise -->
-                        <div class="saas-card p-6 bg-white space-y-4">
-                            <div class="text-xs font-bold uppercase tracking-wider text-slate-500">Profil Entreprise BTP</div>
-                            <h3 class="text-base font-bold text-slate-900">SAS Artisan BTP Travaux</h3>
-                            
-                            <div class="space-y-2 text-xs text-slate-600">
-                                <div><span class="font-bold text-slate-700">SIRET :</span> 849 123 456 00012</div>
-                                <div><span class="font-bold text-slate-700">Activité :</span> Travaux d'installation électrique & second œuvre</div>
-                                <div><span class="font-bold text-slate-700">Assurance Décennale :</span> SMABTP Pol. n° 987654321 (Valide)</div>
-                                <div><span class="font-bold text-slate-700">Qualifications :</span> Qualifelec RGE E2-C2, Qualibat 4112</div>
-                            </div>
-
-                            <div class="pt-3 border-t border-slate-100">
-                                <span class="text-[11px] text-slate-400">Pour modifier vos coordonnées de facturation, contactez le support.</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
 

@@ -17,6 +17,8 @@ from app.services.sample_data import (
     SAMPLE_1_DPGF_ITEMS,
     SAMPLE_2_CCTP_TEXT,
     SAMPLE_2_DPGF_ITEMS,
+    SAMPLE_3_CCTP_TEXT,
+    SAMPLE_3_DPGF_ITEMS,
     generate_sample_files_if_needed,
 )
 
@@ -116,7 +118,15 @@ async def load_sample(req: LoadSampleRequest):
     """
     Loads pre-built realistic French BTP public tender examples for instant demo.
     """
-    if req.sample_id == "2":
+    if req.sample_id == "3":
+        analysis = TenderAnalyzerEngine.analyze(
+            cctp_text=SAMPLE_3_CCTP_TEXT,
+            dpgf_items=SAMPLE_3_DPGF_ITEMS,
+            filename_cctp="CCTP_CVC_Plomberie_Creche.pdf",
+            filename_dpgf="DPGF_Lot03_CVC_Plomberie.xlsx",
+            gemini_api_key=req.gemini_api_key,
+        )
+    elif req.sample_id == "2":
         analysis = TenderAnalyzerEngine.analyze(
             cctp_text=SAMPLE_2_CCTP_TEXT,
             dpgf_items=SAMPLE_2_DPGF_ITEMS,

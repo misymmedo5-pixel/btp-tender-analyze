@@ -95,6 +95,20 @@ def run_tests():
     assert analysis2.scoring.overall_score > 0
     print(f"✅ 9. Dossier Plâtrerie / Médiathèque : OK (Score: {analysis2.scoring.overall_score}/100)", flush=True)
 
+    # 10. Test Sample 3 (CVC / Plomberie)
+    pdf3 = SAMPLES_DIR / "CCTP_CVC_Plomberie_Creche.pdf"
+    xlsx3 = SAMPLES_DIR / "DPGF_Lot03_CVC_Plomberie.xlsx"
+    pdf3_res = PDFParser.extract_text_and_metadata(pdf3)
+    dpgf3_items = DPGFParser.parse_pricing_grid(xlsx3)
+    analysis3 = TenderAnalyzerEngine.analyze(
+        cctp_text=pdf3_res["full_text"],
+        dpgf_items=dpgf3_items,
+        filename_cctp=pdf3.name,
+        filename_dpgf=xlsx3.name,
+    )
+    assert analysis3.scoring.overall_score > 0
+    print(f"✅ 10. Dossier Plomberie / CVC Crèche : OK (Score: {analysis3.scoring.overall_score}/100)", flush=True)
+
     print("\n🎉 TOUS LES COMPOSANTS DU BTP TENDER ANALYZER FONCTIONNENT PARFAITEMENT !", flush=True)
 
 if __name__ == "__main__":

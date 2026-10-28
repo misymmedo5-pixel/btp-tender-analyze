@@ -42,6 +42,35 @@ code, pre, .font-mono {
     background: #94A3B8;
 }
 
+/* Custom range input styling */
+input[type=range] {
+    accent-color: #EA580C;
+    cursor: pointer;
+}
+
+/* FAQ Accordion */
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, opacity 0.2s ease;
+    opacity: 0;
+}
+.faq-item.active .faq-answer {
+    max-height: 300px;
+    opacity: 1;
+}
+.faq-item.active .faq-chevron {
+    transform: rotate(180deg);
+}
+.faq-chevron {
+    transition: transform 0.2s ease;
+}
+
+/* Cost Breakdown Bar */
+.breakdown-segment {
+    transition: width 0.4s ease-in-out;
+}
+
 /* SaaS Card Elevation (Shadcn UI style) */
 .saas-card {
     background-color: #FFFFFF;
